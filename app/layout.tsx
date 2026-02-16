@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { globalWatcher } from '@/lib/fs/watcher';
+
+// Start watching clawd directory
+if (process.env.NODE_ENV === 'development') {
+  globalWatcher.start([
+    'clawd/tasks',
+    'clawd/approvals',
+    'clawd/projects',
+    'clawd/people',
+    'clawd/cron',
+    'clawd/memory',
+  ]);
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

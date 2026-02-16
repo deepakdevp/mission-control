@@ -1,0 +1,7 @@
+{
+  "id": "approval-1",
+  "type": "deployment",
+  "request": "Deploy mission control to production?",
+  "status": "pending",
+  "createdAt": "2026-02-17T00:00:00Z"
+}

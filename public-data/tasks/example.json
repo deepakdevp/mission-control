@@ -1,0 +1,11 @@
+{
+  "id": "task-1",
+  "title": "Build mission control dashboard",
+  "description": "Create a Next.js dashboard for managing Clawdbot",
+  "status": "in_progress",
+  "priority": "high",
+  "assignedTo": "agent",
+  "tags": ["development", "ui"],
+  "createdAt": "2026-02-17T00:00:00Z",
+  "updatedAt": "2026-02-17T00:00:00Z"
+}

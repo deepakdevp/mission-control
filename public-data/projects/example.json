@@ -1,0 +1,10 @@
+{
+  "id": "project-1",
+  "name": "Mission Control",
+  "description": "Build a dashboard for Clawdbot",
+  "status": "active",
+  "tasks": ["task-1"],
+  "tags": ["development"],
+  "createdAt": "2026-02-17T00:00:00Z",
+  "updatedAt": "2026-02-17T00:00:00Z"
+}

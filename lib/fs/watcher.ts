@@ -1,26 +1,10 @@
-import chokidar from 'chokidar';
-import { EventEmitter } from 'events';
+import { getFileSyncService } from '../sync/file-sync';
 
-export class FileWatcher extends EventEmitter {
-  private watcher: chokidar.FSWatcher | null = null;
+// Use the file sync service as the global watcher
+export const globalWatcher = getFileSyncService();
 
-  start(paths: string[]) {
-    this.watcher = chokidar.watch(paths, {
-      persistent: true,
-      ignoreInitial: true,
-    });
-
-    this.watcher.on('add', (path) => this.emit('change', { type: 'add', path }));
-    this.watcher.on('change', (path) => this.emit('change', { type: 'change', path }));
-    this.watcher.on('unlink', (path) => this.emit('change', { type: 'unlink', path }));
-  }
-
-  stop() {
-    if (this.watcher) {
-      this.watcher.close();
-      this.watcher = null;
-    }
-  }
+// Initialize the watcher when this module is loaded
+if (typeof window === 'undefined') {
+  // Server-side only
+  globalWatcher.start().catch(console.error);
 }
-
-export const globalWatcher = new FileWatcher();

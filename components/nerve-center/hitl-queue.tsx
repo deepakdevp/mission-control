@@ -63,7 +63,7 @@ export function HITLQueue() {
               </Button>
               <Button
                 size="sm"
-                variant="outline"
+                variant="ghost"
                 onClick={() => handleDeny(req.id)}
                 className="border-red-600 text-red-400 hover:bg-red-600/10"
               >

@@ -123,7 +123,7 @@ export function SoulMemoryEditor() {
           <Button
             onClick={restartGateway}
             disabled={isLoading}
-            variant="outline"
+            variant="ghost"
             className="border-amber-600 text-amber-400 hover:bg-amber-600/10"
           >
             Restart Gateway

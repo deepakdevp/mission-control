@@ -332,7 +332,6 @@ export default function CalendarPage() {
               <AIPromptInput
                 onSubmit={handlePromptSubmit}
                 placeholder="'Meeting with John tomorrow at 2pm'"
-                buttonText="Create"
               />
             </div>
 
@@ -482,9 +481,7 @@ export default function CalendarPage() {
                   onNavigate={setDate}
                   onSelectSlot={handleSelectSlot}
                   onSelectEvent={handleSelectEvent}
-                  onEventDrop={handleEventDrop}
                   selectable
-                  resizable
                   style={{ height: 700 }}
                   views={['month', 'week', 'day', 'agenda']}
                   popup

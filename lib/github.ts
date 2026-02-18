@@ -55,7 +55,13 @@ export async function listRepos(): Promise<GitHubRepo[]> {
       'gh repo list --json name,description,url,stargazerCount,forkCount,primaryLanguage,pushedAt,isPrivate --limit 100',
       { encoding: 'utf-8' }
     )
-    return JSON.parse(output)
+    const repos = JSON.parse(output)
+    
+    // Normalize the data - GitHub CLI returns primaryLanguage as {name: "TypeScript"}
+    return repos.map((repo: any) => ({
+      ...repo,
+      primaryLanguage: repo.primaryLanguage?.name || null
+    }))
   } catch (error) {
     console.error('Failed to fetch repos:', error)
     return []

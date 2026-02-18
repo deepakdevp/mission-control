@@ -32,17 +32,17 @@ export function Navigation() {
 
   return (
     <nav className="fixed left-0 top-0 h-screen w-[230px] bg-white border-r border-[#EEEEEE] z-50 flex flex-col">
-      {/* Logo and Title */}
-      <div className="px-4 py-6 border-b border-[#EEEEEE]">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#5B4EE8] flex items-center justify-center">
+      {/* Logo and Title - 16px padding per spec */}
+      <div className="px-4 py-4 border-b border-[#EEEEEE]">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#5B4EE8] flex items-center justify-center flex-shrink-0">
             <span className="text-white text-lg font-bold">⚡</span>
           </div>
-          <h1 className="text-lg font-bold text-[#1A1A2E]">Mission Control</h1>
+          <h1 className="text-base font-bold text-[#1A1A2E]">Mission Control</h1>
         </div>
       </div>
 
-      {/* Navigation Items */}
+      {/* Navigation Items - 16px padding top/bottom per spec */}
       <div className="py-4 flex-1 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href
@@ -53,13 +53,14 @@ export function Navigation() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-4 h-10 transition-colors relative',
+                'flex items-center gap-3 h-10 transition-colors relative',
+                'px-4', /* 0 16px padding per spec */
                 isActive 
                   ? 'bg-[#F0EFFE] text-[#5B4EE8] font-semibold' 
                   : 'text-[#374151] font-medium hover:bg-[#F9FAFB]'
               )}
             >
-              {/* Active indicator */}
+              {/* Active indicator - 3px left border per spec */}
               {isActive && (
                 <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#5B4EE8]" />
               )}
@@ -71,8 +72,8 @@ export function Navigation() {
         })}
       </div>
 
-      {/* Footer */}
-      <div className="px-4 py-4 mt-auto border-t border-[#EEEEEE]">
+      {/* Footer - 16px padding per spec */}
+      <div className="px-4 py-3 mt-auto border-t border-[#EEEEEE]">
         <div className="flex items-center justify-between text-xs text-[#6B7280]">
           <span>v0.1.0</span>
           <div className="flex items-center gap-1.5">

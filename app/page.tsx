@@ -82,11 +82,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
+      {/* Header - 56px height per spec */}
       <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-40">
-        <div className="px-8 h-14 flex items-center justify-between">
+        <div className="h-14 px-6 flex items-center justify-between">
           <div>
-            <h1 className="text-[28px] font-bold text-[#1A1A2E]">Mission Control</h1>
+            <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Mission Control</h1>
           </div>
           
           <div className="flex items-center gap-3">
@@ -100,9 +100,10 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Main Content - 32px horizontal, 24px vertical padding per spec */}
       <div className="px-8 py-6">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        {/* Stats Grid - 20px gap per spec */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
           {/* Tasks Card */}
           <div className="stat-card">
             <div className="stat-card-icon">
@@ -148,11 +149,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Activity Sections */}
+        {/* Activity Sections - 20px gap per spec */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Recent Tasks */}
           <div className="card">
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-[#1A1A2E]">Recent Tasks</h3>
               <Link href="/tasks">
                 <button className="btn btn-ghost btn-sm">
@@ -199,7 +200,7 @@ export default function Dashboard() {
 
           {/* Upcoming Events */}
           <div className="card">
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-semibold text-[#1A1A2E]">Upcoming Events</h3>
               <Link href="/calendar">
                 <button className="btn btn-ghost btn-sm">

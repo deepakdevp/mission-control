@@ -50,6 +50,12 @@ Mission Control is a glass-morphism themed productivity dashboard that helps you
 - **Dark mode optimized** with subtle depth
 - **Smooth animations** and transitions
 
+## Nerve Center Dashboard
+
+Monitor your AI agent in real-time. See the [Nerve Center docs](docs/NERVE_CENTER.md) for details.
+
+Access at: http://localhost:3000/nerve-center
+
 ## 📸 Screenshots
 
 > *Add screenshots/demo GIFs here after deployment*

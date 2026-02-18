@@ -3,6 +3,7 @@ import { APIFuelGauge } from '@/components/nerve-center/api-fuel-gauge';
 import { SystemVitals } from '@/components/nerve-center/system-vitals';
 import { SoulMemoryEditor } from '@/components/nerve-center/soul-memory-editor';
 import { HITLQueue } from '@/components/nerve-center/hitl-queue';
+import { ErrorBoundary } from '@/components/nerve-center/error-boundary';
 
 export default function NerveCenterPage() {
   return (
@@ -22,19 +23,29 @@ export default function NerveCenterPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column */}
           <div className="lg:col-span-1 space-y-6">
-            <ThoughtStream />
+            <ErrorBoundary>
+              <ThoughtStream />
+            </ErrorBoundary>
           </div>
 
           {/* Middle Column */}
           <div className="lg:col-span-1 space-y-6">
-            <APIFuelGauge />
-            <SystemVitals />
-            <HITLQueue />
+            <ErrorBoundary>
+              <APIFuelGauge />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <SystemVitals />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <HITLQueue />
+            </ErrorBoundary>
           </div>
 
           {/* Right Column */}
           <div className="lg:col-span-1">
-            <SoulMemoryEditor />
+            <ErrorBoundary>
+              <SoulMemoryEditor />
+            </ErrorBoundary>
           </div>
         </div>
       </div>

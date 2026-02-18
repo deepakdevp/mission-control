@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 const GATEWAY_URL = 'http://localhost:18789';
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     const res = await fetch(`${GATEWAY_URL}/api/sessions/list`, {
       headers: { 'Content-Type': 'application/json' },
@@ -18,7 +18,8 @@ export async function GET() {
     
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error('Gateway sessions error:', error);
     return NextResponse.json(
       { error: 'Gateway unreachable' },
       { status: 502 }

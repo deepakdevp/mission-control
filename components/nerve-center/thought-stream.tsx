@@ -14,6 +14,7 @@ interface Message {
 export function ThoughtStream() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isThinking, setIsThinking] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,8 +31,10 @@ export function ThoughtStream() {
         // Check if thinking (last message is user with no assistant reply)
         const lastMsg = parsed[parsed.length - 1];
         setIsThinking(lastMsg?.role === 'user');
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch messages:', error);
+        setIsLoading(false);
       }
     };
 
@@ -55,6 +58,14 @@ export function ThoughtStream() {
       default: return 'bg-zinc-800 border-zinc-700';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-[60vh] flex flex-col bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">

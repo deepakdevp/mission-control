@@ -70,6 +70,7 @@ export function SystemVitals() {
   const [ramHistory, setRamHistory] = useState<number[]>(Array(60).fill(0));
   const [diskHistory, setDiskHistory] = useState<number[]>(Array(60).fill(0));
   const [current, setCurrent] = useState<VitalData>({ cpu: 0, ram: 0, disk: 0, timestamp: 0 });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchVitals = async () => {
@@ -81,8 +82,10 @@ export function SystemVitals() {
         setCpuHistory(prev => [...prev.slice(1), data.cpu]);
         setRamHistory(prev => [...prev.slice(1), data.ram]);
         setDiskHistory(prev => [...prev.slice(1), data.disk]);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch vitals:', error);
+        setIsLoading(false);
       }
     };
 
@@ -90,6 +93,14 @@ export function SystemVitals() {
     const interval = setInterval(fetchVitals, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">

@@ -65,6 +65,7 @@ function CircularGauge({ value, max, label, unit }: GaugeProps) {
 export function APIFuelGauge() {
   const [tokens, setTokens] = useState(0);
   const [cost, setCost] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -78,8 +79,10 @@ export function APIFuelGauge() {
         
         setTokens(tokenUsage);
         setCost(estimatedCost);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch status:', error);
+        setIsLoading(false);
       }
     };
 
@@ -87,6 +90,14 @@ export function APIFuelGauge() {
     const interval = setInterval(fetchStatus, 10000);
     return () => clearInterval(interval);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">

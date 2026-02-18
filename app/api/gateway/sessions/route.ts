@@ -11,8 +11,8 @@ export async function GET() {
     
     if (!res.ok) {
       return NextResponse.json(
-        { error: 'Gateway unreachable' },
-        { status: 502 }
+        { error: 'Failed to fetch sessions' },
+        { status: 500 }
       );
     }
     
@@ -20,8 +20,8 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch sessions' },
-      { status: 500 }
+      { error: 'Gateway unreachable' },
+      { status: 502 }
     );
   }
 }

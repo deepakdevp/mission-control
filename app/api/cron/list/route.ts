@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { execClawdbot } from '@/lib/clawdbot'
+import { callClawdbot } from '@/lib/clawdbot'
 
 export async function GET() {
   try {
-    const result = await execClawdbot('cron list')
+    const result = await callClawdbot('cron list')
     return NextResponse.json(result)
   } catch (error) {
     console.error('Failed to list cron jobs:', error)

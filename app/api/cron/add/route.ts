@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { execClawdbot } from '@/lib/clawdbot'
+import { callClawdbot } from '@/lib/clawdbot'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       args.push('--delete-after-run')
     }
 
-    const result = await execClawdbot(args.join(' '))
+    const result = await callClawdbot(args.join(' '))
     return NextResponse.json(result)
   } catch (error) {
     console.error('Failed to create cron job:', error)

@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-03-04T18:16:00+09:00",
+  "user": "Deepak Dev Panwar",
+  "email": "deepakdevp@gmail.com",
+  "broker": "ZERODHA",
+  "account_id": "RME290",
+  "authenticated": true,
+  "holdings": [],
+  "positions": [],
+  "margins": {
+    "equity": {
+      "enabled": true,
+      "net": -7.8,
+      "cash_balance": -7.8,
+      "opening_balance": -7.8,
+      "available_margin": -7.8
+    }
+  },
+  "summary": {
+    "total_holdings_value": 0,
+    "total_investment": 0,
+    "total_pnl": 0,
+    "num_holdings": 0,
+    "num_open_positions": 0,
+    "cash_available": -7.8
+  },
+  "note": "No holdings or positions found. Account has negative balance of ₹7.8 (likely small fee/charge)."
+}

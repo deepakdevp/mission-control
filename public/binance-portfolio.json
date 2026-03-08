@@ -1,0 +1,55 @@
+{
+  "total_usdt": 992.5913820145172,
+  "num_assets": 6,
+  "timestamp": "2026-03-08T13:26:22.494478",
+  "holdings": [
+    {
+      "asset": "BTC",
+      "spot": 0.00055727,
+      "flexible": 0.01191645,
+      "locked": 0,
+      "total": 0.01247372,
+      "usdt_value": 836.2091250324
+    },
+    {
+      "asset": "ADA",
+      "spot": 343.8251988,
+      "flexible": 0,
+      "locked": 13.8119869,
+      "total": 357.63718570000003,
+      "usdt_value": 90.23186195211002
+    },
+    {
+      "asset": "ETH",
+      "spot": 0.00028306,
+      "flexible": 0.03278929,
+      "locked": 0,
+      "total": 0.03307235,
+      "usdt_value": 64.580377845
+    },
+    {
+      "asset": "BNB",
+      "spot": 0.00132154,
+      "flexible": 0,
+      "locked": 0,
+      "total": 0.00132154,
+      "usdt_value": 0.8160641653999999
+    },
+    {
+      "asset": "SOL",
+      "spot": 0.0069658,
+      "flexible": 0,
+      "locked": 0,
+      "total": 0.0069658,
+      "usdt_value": 0.574539184
+    },
+    {
+      "asset": "SXT",
+      "spot": 10.49203717,
+      "flexible": 0,
+      "locked": 0,
+      "total": 10.49203717,
+      "usdt_value": 0.179413835607
+    }
+  ]
+}

@@ -34,9 +34,43 @@ interface PortfolioData {
 
 // --- API FUNCTION ---
 async function fetchPortfolio(): Promise<PortfolioData> {
-  const res = await fetch('/api/portfolio');
-  if (!res.ok) throw new Error('Failed to fetch portfolio data');
-  return res.json();
+  const [binanceRes, zerodhaRes] = await Promise.all([
+    fetch('/binance-portfolio.json'),
+    fetch('/zerodha-portfolio.json')
+  ]);
+
+  if (!binanceRes.ok || !zerodhaRes.ok) {
+    throw new Error('Failed to fetch portfolio data');
+  }
+
+  const binanceData = await binanceRes.json();
+  const zerodhaData = await zerodhaRes.json();
+  
+  // Basic transformation to standardize the data for the frontend
+  const portfolio = {
+      binance: {
+          totalValueUsd: binanceData.total_value_usd || 0,
+          holdings: binanceData.assets?.map((asset: any) => ({
+              symbol: asset.asset,
+              name: asset.asset_name,
+              amount: parseFloat(asset.total_balance),
+              valueUsd: parseFloat(asset.value_usd),
+              logo: asset.logo_url
+          })) || [],
+      },
+      zerodha: {
+          totalValueInr: zerodhaData.total_value_inr || 0,
+          holdings: zerodhaData.holdings?.map((holding: any) => ({
+              symbol: holding.tradingsymbol,
+              name: holding.instrument_token, // Placeholder, might need a mapping for full names
+              amount: parseFloat(holding.quantity),
+              valueInr: parseFloat(holding.last_price) * parseFloat(holding.quantity),
+              pnlPercentage: parseFloat(holding.pnl_percentage)
+          })) || [],
+      }
+  };
+
+  return portfolio;
 }
 
 // --- HELPER COMPONENTS ---

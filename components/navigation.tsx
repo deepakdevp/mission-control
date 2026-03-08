@@ -13,7 +13,8 @@ import {
   Clock,
   Brain,
   Activity,
-  Lightbulb
+  Lightbulb,
+  TrendingUp
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +24,7 @@ const navItems = [
   { href: '/ideas', icon: Lightbulb, label: 'Ideas' },
   { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
   { href: '/approvals', icon: Shield, label: 'Approvals' },
+  { href: '/portfolio', icon: TrendingUp, label: 'Portfolio' },
   { href: '/calendar', icon: Calendar, label: 'Calendar' },
   { href: '/projects', icon: FolderGit2, label: 'Projects' },
   { href: '/people', icon: Users, label: 'People' },

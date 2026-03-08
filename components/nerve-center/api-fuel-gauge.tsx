@@ -25,7 +25,7 @@ function CircularGauge({ value, max, label, unit }: GaugeProps) {
           cy="60"
           r="54"
           fill="none"
-          stroke="#27272a"
+          stroke="#F3F4F6"
           strokeWidth="8"
         />
         {/* Progress circle */}
@@ -34,30 +34,24 @@ function CircularGauge({ value, max, label, unit }: GaugeProps) {
           cy="60"
           r="54"
           fill="none"
-          stroke={isWarning ? '#f59e0b' : 'url(#gradient)'}
+          stroke={isWarning ? '#F59E0B' : '#5B4EE8'}
           strokeWidth="8"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           style={{ transition: 'stroke-dashoffset 0.5s ease' }}
         />
-        <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#06b6d4" />
-            <stop offset="100%" stopColor="#a855f7" />
-          </linearGradient>
-        </defs>
       </svg>
       
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold text-zinc-100">
+        <span className="text-2xl font-bold text-[#1A1A2E]">
           {value.toLocaleString()}
         </span>
-        <span className="text-xs text-zinc-400">{unit}</span>
+        <span className="text-xs text-[#9CA3AF]">{unit}</span>
       </div>
       
-      <p className="mt-3 text-sm font-medium text-zinc-300">{label}</p>
-      <p className="text-xs text-zinc-500">of {max.toLocaleString()}</p>
+      <p className="mt-3 text-sm font-medium text-[#1A1A2E]">{label}</p>
+      <p className="text-xs text-[#6B7280]">of {max.toLocaleString()}</p>
     </div>
   );
 }
@@ -93,15 +87,15 @@ export function APIFuelGauge() {
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent" />
+      <div className="card flex items-center justify-center h-64">
+        <div className="spinner" />
       </div>
     );
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-      <h3 className="text-sm font-semibold text-zinc-100 mb-6">API Fuel Gauges</h3>
+    <div className="card">
+      <h3 className="text-base font-semibold text-[#1A1A2E] mb-6">API Fuel Gauges</h3>
       
       <div className="grid grid-cols-2 gap-6">
         <CircularGauge

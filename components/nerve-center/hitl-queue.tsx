@@ -27,26 +27,26 @@ export function HITLQueue() {
 
   if (requests.length === 0) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-8 text-center">
-        <p className="text-zinc-400 text-sm">No pending approvals 🎉</p>
+      <div className="card text-center">
+        <p className="text-[#6B7280] text-sm">No pending approvals 🎉</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-      <h3 className="text-sm font-semibold text-zinc-100 mb-4">Pending Approvals</h3>
+    <div className="card">
+      <h3 className="text-base font-semibold text-[#1A1A2E] mb-4">Pending Approvals</h3>
       
       <div className="space-y-3">
         {requests.map((req) => (
           <div
             key={req.id}
-            className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4"
+            className="bg-[#F9FAFB] border border-[#EEEEEE] rounded-lg p-4"
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1">
-                <p className="text-sm text-zinc-100 mb-1">{req.task}</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm text-[#1A1A2E] mb-1">{req.task}</p>
+                <p className="text-xs text-[#6B7280]">
                   {req.requester} • {new Date(req.timestamp).toLocaleString()}
                 </p>
               </div>
@@ -56,7 +56,7 @@ export function HITLQueue() {
               <Button
                 size="sm"
                 onClick={() => handleApprove(req.id)}
-                className="bg-green-600 hover:bg-green-500"
+                className="btn btn-primary btn-sm"
               >
                 <CheckCircle2 className="w-4 h-4 mr-1" />
                 Approve
@@ -65,7 +65,7 @@ export function HITLQueue() {
                 size="sm"
                 variant="ghost"
                 onClick={() => handleDeny(req.id)}
-                className="border-red-600 text-red-400 hover:bg-red-600/10"
+                className="btn btn-secondary btn-sm"
               >
                 <XCircle className="w-4 h-4 mr-1" />
                 Deny

@@ -48,10 +48,10 @@ function Sparkline({ data, label, current, color }: SparklineProps) {
   }, [data, color]);
 
   return (
-    <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4">
+    <div className="bg-[#F9FAFB] border border-[#EEEEEE] rounded-lg p-4">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-xs font-medium text-zinc-400">{label}</h4>
-        <span className="text-2xl font-bold text-zinc-100">
+        <h4 className="text-xs font-medium text-[#6B7280]">{label}</h4>
+        <span className="text-2xl font-bold text-[#1A1A2E]">
           {current.toFixed(1)}%
         </span>
       </div>
@@ -96,34 +96,34 @@ export function SystemVitals() {
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent" />
+      <div className="card flex items-center justify-center h-64">
+        <div className="spinner" />
       </div>
     );
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-      <h3 className="text-sm font-semibold text-zinc-100 mb-4">System Vitals</h3>
+    <div className="card">
+      <h3 className="text-base font-semibold text-[#1A1A2E] mb-4">System Vitals</h3>
       
       <div className="space-y-4">
         <Sparkline
           data={cpuHistory}
           label="CPU Load"
           current={current.cpu}
-          color="#06b6d4"
+          color="#5B4EE8"
         />
         <Sparkline
           data={ramHistory}
           label="RAM Usage"
           current={current.ram}
-          color="#a855f7"
+          color="#10B981"
         />
         <Sparkline
           data={diskHistory}
           label="Disk Space"
           current={current.disk}
-          color="#10b981"
+          color="#F59E0B"
         />
       </div>
     </div>

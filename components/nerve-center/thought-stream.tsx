@@ -52,28 +52,28 @@ export function ThoughtStream() {
 
   const getMessageColor = (role: string) => {
     switch (role) {
-      case 'user': return 'bg-emerald-500/10 border-emerald-500/50';
-      case 'assistant': return 'bg-purple-500/10 border-purple-500/50';
-      case 'tool': return 'bg-amber-500/10 border-amber-500/50';
-      default: return 'bg-zinc-800 border-zinc-700';
+      case 'user': return 'bg-[#D1FAE5] border-[#10B981]';
+      case 'assistant': return 'bg-[#F0EFFE] border-[#5B4EE8]';
+      case 'tool': return 'bg-[#FEF3C7] border-[#F59E0B]';
+      default: return 'bg-[#F9FAFB] border-[#EEEEEE]';
     }
   };
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-cyan-400 border-t-transparent" />
+      <div className="card flex items-center justify-center h-64">
+        <div className="spinner" />
       </div>
     );
   }
 
   return (
-    <div className="h-[60vh] flex flex-col bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 bg-zinc-800/50 border-b border-zinc-700">
-        <h3 className="text-sm font-semibold text-zinc-100">Live Thought Stream</h3>
+    <div className="h-[60vh] flex flex-col card overflow-hidden !p-0">
+      <div className="px-6 py-4 border-b border-[#EEEEEE]">
+        <h3 className="text-base font-semibold text-[#1A1A2E]">Live Thought Stream</h3>
       </div>
       
-      <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div ref={containerRef} className="flex-1 overflow-y-auto p-6 space-y-3">
         {messages.map((msg) => (
           <motion.div
             key={msg.id}
@@ -82,14 +82,14 @@ export function ThoughtStream() {
             className={`p-3 border rounded-lg ${getMessageColor(msg.role)}`}
           >
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-mono text-zinc-400">
+              <span className="text-xs font-mono text-[#6B7280]">
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </span>
-              <span className="text-xs font-medium text-zinc-300 uppercase">
+              <span className="text-xs font-medium text-[#1A1A2E] uppercase">
                 {msg.role}
               </span>
             </div>
-            <p className="text-sm font-mono text-zinc-100">{msg.content}</p>
+            <p className="text-sm font-mono text-[#374151]">{msg.content}</p>
           </motion.div>
         ))}
         
@@ -97,9 +97,9 @@ export function ThoughtStream() {
           <motion.div
             animate={{ scale: [0.95, 1.05, 0.95] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
-            className="p-3 border border-purple-500/50 bg-purple-500/10 rounded-lg"
+            className="p-3 border border-[#5B4EE8] bg-[#F0EFFE] rounded-lg"
           >
-            <p className="text-sm font-mono text-purple-300">Thinking...</p>
+            <p className="text-sm font-mono text-[#5B4EE8]">Thinking...</p>
           </motion.div>
         )}
       </div>

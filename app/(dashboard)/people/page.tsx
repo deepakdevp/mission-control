@@ -67,7 +67,7 @@ export default function PeoplePage() {
       });
 
       if (!res.ok) throw new Error('Failed to create person');
-      
+
       await fetchPeople();
       setIsModalOpen(false);
       resetForm();
@@ -87,7 +87,7 @@ export default function PeoplePage() {
       });
 
       if (!res.ok) throw new Error('Failed to update person');
-      
+
       await fetchPeople();
       setIsEditing(false);
       const updated = await res.json();
@@ -150,12 +150,12 @@ export default function PeoplePage() {
     }
   };
 
-  const tagColors = ['bg-red-500/20 text-red-400', 'bg-blue-500/20 text-blue-400', 'bg-green-500/20 text-green-400', 'bg-yellow-500/20 text-yellow-400', 'bg-purple-500/20 text-purple-400'];
+  const avatarColors = ['bg-[#0057ff]', 'bg-[#028901]', 'bg-[#7c3aed]', 'bg-[#f97c00]', 'bg-[#d00d00]'];
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading contacts...</div>
+        <div className="text-[#6b6b6b]">Loading contacts...</div>
       </div>
     );
   }
@@ -171,7 +171,7 @@ export default function PeoplePage() {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" />
         <Input
           className="pl-10"
           placeholder="Search contacts..."
@@ -181,9 +181,9 @@ export default function PeoplePage() {
       </div>
 
       {filteredPeople.length === 0 ? (
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground mb-4">
+        <div className="bg-white border border-[#e8e8e8] rounded-lg p-8 text-center">
+          <Users className="w-12 h-12 mx-auto mb-4 text-[#6b6b6b]" />
+          <p className="text-[#6b6b6b] mb-4">
             {searchQuery ? 'No contacts found' : 'No contacts yet'}
           </p>
           {!searchQuery && (
@@ -197,18 +197,18 @@ export default function PeoplePage() {
           {filteredPeople.map((person, idx) => (
             <div
               key={person.id}
-              className="bg-card border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
+              className="bg-white border border-[#e8e8e8] rounded-lg p-4 hover:border-[#0057ff] transition-colors cursor-pointer"
               onClick={() => openPerson(person)}
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className={cn('w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold', tagColors[idx % tagColors.length])}>
+                  <div className={cn('w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold', avatarColors[idx % avatarColors.length])}>
                     {person.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <h3 className="font-semibold">{person.name}</h3>
                     {person.lastContact && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-[#6b6b6b]">
                         Last contact: {new Date(person.lastContact).toLocaleDateString()}
                       </p>
                     )}
@@ -217,7 +217,7 @@ export default function PeoplePage() {
               </div>
 
               {(person.email || person.phone) && (
-                <div className="space-y-1 text-sm text-muted-foreground mb-3">
+                <div className="space-y-1 text-sm text-[#6b6b6b] mb-3">
                   {person.email && (
                     <div className="flex items-center gap-2">
                       <Mail className="w-3 h-3" />
@@ -236,12 +236,12 @@ export default function PeoplePage() {
               {person.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {person.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                    <span key={tag} className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                       {tag}
                     </span>
                   ))}
                   {person.tags.length > 3 && (
-                    <span className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                    <span className="text-xs px-2 py-0.5 rounded bg-[#f0f0f0] text-[#6b6b6b]">
                       +{person.tags.length - 3}
                     </span>
                   )}
@@ -313,7 +313,7 @@ export default function PeoplePage() {
             <label className="block text-sm font-medium mb-1">Social Links</label>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Linkedin className="w-4 h-4 text-muted-foreground" />
+                <Linkedin className="w-4 h-4 text-[#6b6b6b]" />
                 <Input
                   value={formData.socials.linkedin}
                   onChange={(e) => setFormData({ ...formData, socials: { ...formData.socials, linkedin: e.target.value } })}
@@ -321,7 +321,7 @@ export default function PeoplePage() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <TwitterIcon className="w-4 h-4 text-muted-foreground" />
+                <TwitterIcon className="w-4 h-4 text-[#6b6b6b]" />
                 <Input
                   value={formData.socials.twitter}
                   onChange={(e) => setFormData({ ...formData, socials: { ...formData.socials, twitter: e.target.value } })}
@@ -329,7 +329,7 @@ export default function PeoplePage() {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Github className="w-4 h-4 text-muted-foreground" />
+                <Github className="w-4 h-4 text-[#6b6b6b]" />
                 <Input
                   value={formData.socials.github}
                   onChange={(e) => setFormData({ ...formData, socials: { ...formData.socials, github: e.target.value } })}
@@ -356,7 +356,7 @@ export default function PeoplePage() {
               {formData.tags.map(tag => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded text-sm"
+                  className="inline-flex items-center gap-1 px-2 py-1 bg-[#0057ff]/10 text-[#0057ff] rounded text-sm"
                 >
                   {tag}
                   <button
@@ -457,16 +457,16 @@ export default function PeoplePage() {
                 <div className="space-y-2">
                   {selectedPerson.email && (
                     <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <a href={`mailto:${selectedPerson.email}`} className="text-sm hover:text-primary">
+                      <Mail className="w-4 h-4 text-[#6b6b6b]" />
+                      <a href={`mailto:${selectedPerson.email}`} className="text-sm hover:text-[#0057ff]">
                         {selectedPerson.email}
                       </a>
                     </div>
                   )}
                   {selectedPerson.phone && (
                     <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-muted-foreground" />
-                      <a href={`tel:${selectedPerson.phone}`} className="text-sm hover:text-primary">
+                      <Phone className="w-4 h-4 text-[#6b6b6b]" />
+                      <a href={`tel:${selectedPerson.phone}`} className="text-sm hover:text-[#0057ff]">
                         {selectedPerson.phone}
                       </a>
                     </div>
@@ -478,24 +478,24 @@ export default function PeoplePage() {
                 <div className="space-y-2">
                   {selectedPerson.socials.linkedin && (
                     <div className="flex items-center gap-2">
-                      <Linkedin className="w-4 h-4 text-muted-foreground" />
-                      <a href={selectedPerson.socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">
+                      <Linkedin className="w-4 h-4 text-[#6b6b6b]" />
+                      <a href={selectedPerson.socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-[#0057ff]">
                         LinkedIn
                       </a>
                     </div>
                   )}
                   {selectedPerson.socials.twitter && (
                     <div className="flex items-center gap-2">
-                      <TwitterIcon className="w-4 h-4 text-muted-foreground" />
-                      <a href={selectedPerson.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">
+                      <TwitterIcon className="w-4 h-4 text-[#6b6b6b]" />
+                      <a href={selectedPerson.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-[#0057ff]">
                         Twitter
                       </a>
                     </div>
                   )}
                   {selectedPerson.socials.github && (
                     <div className="flex items-center gap-2">
-                      <Github className="w-4 h-4 text-muted-foreground" />
-                      <a href={selectedPerson.socials.github} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-primary">
+                      <Github className="w-4 h-4 text-[#6b6b6b]" />
+                      <a href={selectedPerson.socials.github} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-[#0057ff]">
                         GitHub
                       </a>
                     </div>
@@ -506,16 +506,16 @@ export default function PeoplePage() {
               {selectedPerson.notes && (
                 <div>
                   <h4 className="text-sm font-medium mb-2">Notes</h4>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  <p className="text-sm text-[#6b6b6b] whitespace-pre-wrap">
                     {selectedPerson.notes}
                   </p>
                 </div>
               )}
 
               {selectedPerson.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-[#e8e8e8]">
                   {selectedPerson.tags.map(tag => (
-                    <span key={tag} className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">
+                    <span key={tag} className="text-xs px-2 py-1 rounded bg-[#0057ff]/10 text-[#0057ff]">
                       {tag}
                     </span>
                   ))}

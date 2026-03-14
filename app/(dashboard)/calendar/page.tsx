@@ -121,7 +121,7 @@ export default function CalendarPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading calendar...</div>
+        <div className="text-[#6b6b6b]">Loading calendar...</div>
       </div>
     );
   }
@@ -138,7 +138,7 @@ export default function CalendarPage() {
 
       <div className="grid grid-cols-3 gap-6">
         <div className="col-span-2">
-          <div className="bg-card border border-border rounded-lg p-4 h-[600px]">
+          <div className="bg-white border border-[#e8e8e8] rounded-lg p-4 h-[600px]">
             <Calendar
               localizer={localizer}
               events={calendarEvents}
@@ -152,16 +152,16 @@ export default function CalendarPage() {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-card border border-border rounded-lg p-4">
+          <div className="bg-white border border-[#e8e8e8] rounded-lg p-4">
             <h2 className="font-semibold mb-3">Today's Events</h2>
             {todaysEvents.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No events today</p>
+              <p className="text-sm text-[#6b6b6b]">No events today</p>
             ) : (
               <div className="space-y-2">
                 {todaysEvents.map(event => (
-                  <div key={event.id} className="p-2 bg-background rounded border border-border">
+                  <div key={event.id} className="p-2 bg-[#f5f6f8] rounded border border-[#e8e8e8]">
                     <p className="text-sm font-medium">{event.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[#6b6b6b]">
                       {format(new Date(event.start), 'h:mm a')} - {format(new Date(event.end), 'h:mm a')}
                     </p>
                   </div>
@@ -170,19 +170,19 @@ export default function CalendarPage() {
             )}
           </div>
 
-          <div className="bg-card border border-border rounded-lg p-4">
+          <div className="bg-white border border-[#e8e8e8] rounded-lg p-4">
             <h2 className="font-semibold mb-3 flex items-center gap-2">
               <Clock className="w-4 h-4" />
               Upcoming
             </h2>
             {upcomingEvents.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No upcoming events</p>
+              <p className="text-sm text-[#6b6b6b]">No upcoming events</p>
             ) : (
               <div className="space-y-2">
                 {upcomingEvents.map(event => (
-                  <div key={event.id} className="p-2 bg-background rounded border border-border">
+                  <div key={event.id} className="p-2 bg-[#f5f6f8] rounded border border-[#e8e8e8]">
                     <p className="text-sm font-medium">{event.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-[#6b6b6b]">
                       {format(new Date(event.start), 'MMM d, h:mm a')}
                     </p>
                   </div>

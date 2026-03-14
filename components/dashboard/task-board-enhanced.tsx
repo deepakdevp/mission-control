@@ -26,10 +26,10 @@ interface TaskBoardProps {
 }
 
 const columns = [
-  { id: 'todo' as const, title: 'To Do', color: 'bg-gray-500/20' },
-  { id: 'in_progress' as const, title: 'In Progress', color: 'bg-blue-500/20' },
+  { id: 'todo' as const, title: 'To Do', color: 'bg-[#6b6b6b]/20' },
+  { id: 'in_progress' as const, title: 'In Progress', color: 'bg-[#0057ff]/20' },
   { id: 'done' as const, title: 'Done', color: 'bg-green-500/20' },
-  { id: 'blocked' as const, title: 'Blocked', color: 'bg-red-500/20' },
+  { id: 'blocked' as const, title: 'Blocked', color: 'bg-[#d00d00]/20' },
 ];
 
 export function TaskBoardEnhanced({ tasks, onUpdateTask, onDeleteTask, onCreateTask }: TaskBoardProps) {
@@ -50,7 +50,7 @@ export function TaskBoardEnhanced({ tasks, onUpdateTask, onDeleteTask, onCreateT
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     if (!over) {
       setActiveTask(null);
       return;
@@ -58,12 +58,12 @@ export function TaskBoardEnhanced({ tasks, onUpdateTask, onDeleteTask, onCreateT
 
     const taskId = active.id as string;
     const newStatus = over.id as Task['status'];
-    
+
     const task = tasks.find(t => t.id === taskId);
     if (task && task.status !== newStatus) {
       await onUpdateTask(taskId, { status: newStatus });
     }
-    
+
     setActiveTask(null);
   };
 

@@ -15,7 +15,7 @@ interface TaskCardProps {
 
 export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   const {
     attributes,
     listeners,
@@ -31,10 +31,10 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
   };
 
   const priorityColors = {
-    urgent: 'bg-red-500/20 text-red-400 border-red-500/30',
-    high: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-    medium: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    low: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+    urgent: 'bg-[#d00d00]/20 text-[#d00d00] border-[#d00d00]/30',
+    high: 'bg-[#f97c00]/20 text-[#f97c00] border-[#f97c00]/30',
+    medium: 'bg-[#0057ff]/20 text-[#0057ff] border-[#0057ff]/30',
+    low: 'bg-[#6b6b6b]/20 text-[#6b6b6b] border-[#6b6b6b]/30',
   };
 
   return (
@@ -42,7 +42,7 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        'bg-background border border-border rounded p-3 cursor-pointer hover:border-primary transition-all',
+        'bg-[#f5f6f8] border border-[#e8e8e8] rounded p-3 cursor-pointer hover:border-[#0057ff] transition-all',
         isDragging && 'opacity-50'
       )}
       onMouseEnter={() => setIsHovered(true)}
@@ -50,28 +50,28 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
     >
       <div className="flex items-start gap-2">
         <button
-          className="mt-0.5 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing"
+          className="mt-0.5 text-[#6b6b6b] hover:text-[#191919] cursor-grab active:cursor-grabbing"
           {...attributes}
           {...listeners}
         >
           <GripVertical className="w-4 h-4" />
         </button>
-        
+
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm">{task.title}</p>
           {task.description && (
-            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+            <p className="text-xs text-[#6b6b6b] mt-1 line-clamp-2">
               {task.description}
             </p>
           )}
-          
+
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <span className={cn('text-xs px-2 py-0.5 rounded border', priorityColors[task.priority])}>
               {task.priority}
             </span>
-            
+
             {task.tags.map(tag => (
-              <span key={tag} className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+              <span key={tag} className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                 {tag}
               </span>
             ))}
@@ -82,13 +82,13 @@ export function TaskCard({ task, onUpdate, onDelete }: TaskCardProps) {
           <div className="flex gap-1">
             <button
               onClick={() => onUpdate(task.id, task)}
-              className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+              className="p-1 text-[#6b6b6b] hover:text-[#191919] transition-colors"
             >
               <Pencil className="w-3 h-3" />
             </button>
             <button
               onClick={() => onDelete(task.id)}
-              className="p-1 text-muted-foreground hover:text-red-500 transition-colors"
+              className="p-1 text-[#6b6b6b] hover:text-red-500 transition-colors"
             >
               <Trash2 className="w-3 h-3" />
             </button>

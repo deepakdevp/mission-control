@@ -19,8 +19,8 @@ export function TaskColumn({ id, title, color, count, children }: TaskColumnProp
     <div
       ref={setNodeRef}
       className={cn(
-        'bg-card border border-border rounded-lg p-4 transition-colors',
-        isOver && 'border-primary bg-primary/5'
+        'bg-white border border-[#e8e8e8] rounded-lg p-4 transition-colors',
+        isOver && 'border-[#0057ff] bg-[#0057ff]/5'
       )}
     >
       <div className="flex items-center justify-between mb-3">

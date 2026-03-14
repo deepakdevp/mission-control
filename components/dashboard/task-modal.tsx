@@ -145,7 +145,7 @@ export function TaskModal({ open, onClose, onSubmit, initialData }: TaskModalPro
             {tags.map(tag => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded text-sm"
+                className="inline-flex items-center gap-1 px-2 py-1 bg-[#0057ff]/10 text-[#0057ff] rounded text-sm"
               >
                 {tag}
                 <button type="button" onClick={() => removeTag(tag)}>

@@ -55,7 +55,7 @@ export default function CronPage() {
       });
 
       if (!res.ok) throw new Error('Failed to create cron job');
-      
+
       await fetchJobs();
       setIsModalOpen(false);
       setFormData({
@@ -116,7 +116,7 @@ export default function CronPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading cron jobs...</div>
+        <div className="text-[#6b6b6b]">Loading cron jobs...</div>
       </div>
     );
   }
@@ -132,15 +132,15 @@ export default function CronPage() {
       </div>
 
       {jobs.length === 0 ? (
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <Clock className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground mb-4">No cron jobs yet</p>
+        <div className="bg-white border border-[#e8e8e8] rounded-lg p-8 text-center">
+          <Clock className="w-12 h-12 mx-auto mb-4 text-[#6b6b6b]" />
+          <p className="text-[#6b6b6b] mb-4">No cron jobs yet</p>
           <Button onClick={() => setIsModalOpen(true)}>Create your first cron job</Button>
         </div>
       ) : (
-        <div className="bg-card border border-border rounded-lg overflow-hidden">
+        <div className="bg-white border border-[#e8e8e8] rounded-lg overflow-hidden">
           <table className="w-full">
-            <thead className="bg-background border-b border-border">
+            <thead className="bg-[#f5f6f8] border-b border-[#e8e8e8]">
               <tr>
                 <th className="text-left p-4 font-semibold">Name</th>
                 <th className="text-left p-4 font-semibold">Schedule</th>
@@ -152,17 +152,17 @@ export default function CronPage() {
             </thead>
             <tbody>
               {jobs.map((job, idx) => (
-                <tr key={job.id} className={cn('border-b border-border', idx % 2 === 0 && 'bg-background/50')}>
+                <tr key={job.id} className={cn('border-b border-[#e8e8e8]', idx % 2 === 0 && 'bg-[#f5f6f8]/50')}>
                   <td className="p-4">
                     <div>
                       <p className="font-medium">{job.name}</p>
-                      <p className="text-sm text-muted-foreground truncate max-w-xs">
+                      <p className="text-sm text-[#6b6b6b] truncate max-w-xs">
                         {job.command}
                       </p>
                     </div>
                   </td>
                   <td className="p-4">
-                    <code className="text-xs bg-background px-2 py-1 rounded">
+                    <code className="text-xs bg-[#f5f6f8] px-2 py-1 rounded">
                       {job.schedule}
                     </code>
                   </td>
@@ -176,15 +176,15 @@ export default function CronPage() {
                           <span className={cn(
                             'text-xs px-2 py-0.5 rounded',
                             job.lastStatus === 'success'
-                              ? 'bg-green-500/20 text-green-400'
-                              : 'bg-red-500/20 text-red-400'
+                              ? 'bg-[#f0faf0] text-[#028901]'
+                              : 'bg-[#fef2f2] text-[#d00d00]'
                           )}>
                             {job.lastStatus}
                           </span>
                         )}
                       </div>
                     ) : (
-                      <span className="text-sm text-muted-foreground">Never</span>
+                      <span className="text-sm text-[#6b6b6b]">Never</span>
                     )}
                   </td>
                   <td className="p-4">
@@ -193,7 +193,7 @@ export default function CronPage() {
                         {new Date(job.nextRun).toLocaleString()}
                       </span>
                     ) : (
-                      <span className="text-sm text-muted-foreground">-</span>
+                      <span className="text-sm text-[#6b6b6b]">-</span>
                     )}
                   </td>
                   <td className="p-4">
@@ -202,8 +202,8 @@ export default function CronPage() {
                       className={cn(
                         'inline-flex items-center gap-1 px-2 py-1 rounded text-sm',
                         job.enabled
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-gray-500/20 text-gray-400'
+                          ? 'bg-[#f0faf0] text-[#028901]'
+                          : 'bg-[#f0f0f0] text-[#6b6b6b]'
                       )}
                     >
                       {job.enabled ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
@@ -275,7 +275,7 @@ export default function CronPage() {
               onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
               placeholder="0 0 * * *"
             />
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-[#6b6b6b] mt-1">
               Example: "0 0 * * *" = Daily at midnight
             </p>
           </div>
@@ -315,16 +315,16 @@ export default function CronPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Schedule</p>
-                <code className="text-xs bg-background px-2 py-1 rounded">{selectedJob.schedule}</code>
+                <p className="text-[#6b6b6b]">Schedule</p>
+                <code className="text-xs bg-[#f5f6f8] px-2 py-1 rounded">{selectedJob.schedule}</code>
               </div>
               <div>
-                <p className="text-muted-foreground">Status</p>
+                <p className="text-[#6b6b6b]">Status</p>
                 <span className={cn(
                   'inline-block px-2 py-1 rounded text-xs',
                   selectedJob.enabled
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-gray-500/20 text-gray-400'
+                    ? 'bg-[#f0faf0] text-[#028901]'
+                    : 'bg-[#f0f0f0] text-[#6b6b6b]'
                 )}>
                   {selectedJob.enabled ? 'Enabled' : 'Disabled'}
                 </span>
@@ -333,7 +333,7 @@ export default function CronPage() {
 
             <div>
               <p className="text-sm font-medium mb-2">Command</p>
-              <code className="block bg-background p-3 rounded text-xs font-mono whitespace-pre-wrap">
+              <code className="block bg-[#f5f6f8] p-3 rounded text-xs font-mono whitespace-pre-wrap">
                 {selectedJob.command}
               </code>
             </div>
@@ -341,15 +341,15 @@ export default function CronPage() {
             {selectedJob.logs && selectedJob.logs.length > 0 ? (
               <div>
                 <p className="text-sm font-medium mb-2">Recent Logs</p>
-                <div className="bg-background rounded p-3 max-h-64 overflow-y-auto">
+                <div className="bg-[#f5f6f8] rounded p-3 max-h-64 overflow-y-auto">
                   <pre className="text-xs font-mono whitespace-pre-wrap">
                     {selectedJob.logs.join('\n')}
                   </pre>
                 </div>
               </div>
             ) : (
-              <div className="bg-background rounded p-4 text-center">
-                <p className="text-sm text-muted-foreground">No logs yet</p>
+              <div className="bg-[#f5f6f8] rounded p-4 text-center">
+                <p className="text-sm text-[#6b6b6b]">No logs yet</p>
               </div>
             )}
           </div>

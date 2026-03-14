@@ -60,7 +60,7 @@ export default function ApprovalsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to update approval');
-      
+
       await fetchApprovals();
       setIsModalOpen(false);
       setResponseText('');
@@ -77,9 +77,9 @@ export default function ApprovalsPage() {
 
   const getStatusBadge = (status: Approval['status']) => {
     const styles = {
-      pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      approved: 'bg-green-500/20 text-green-400 border-green-500/30',
-      denied: 'bg-red-500/20 text-red-400 border-red-500/30',
+      pending: 'bg-[#fff8f0] text-[#f97c00] border-[#f97c00]/30',
+      approved: 'bg-[#f0faf0] text-[#028901] border-[#028901]/30',
+      denied: 'bg-[#fef2f2] text-[#d00d00] border-[#d00d00]/30',
     };
 
     const icons = {
@@ -101,7 +101,7 @@ export default function ApprovalsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading approvals...</div>
+        <div className="text-[#6b6b6b]">Loading approvals...</div>
       </div>
     );
   }
@@ -111,12 +111,12 @@ export default function ApprovalsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Approvals</h1>
-          <p className="text-muted-foreground mt-1">Review and approve agent actions</p>
+          <p className="text-[#6b6b6b] mt-1">Review and approve agent actions</p>
         </div>
       </div>
 
       <div className="relative">
-        <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" />
         <Select
           className="pl-10 max-w-xs"
           value={filterStatus}
@@ -130,23 +130,23 @@ export default function ApprovalsPage() {
       </div>
 
       {filteredApprovals.length === 0 ? (
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <p className="text-muted-foreground">No approvals found</p>
+        <div className="bg-white border border-[#e8e8e8] rounded-lg p-8 text-center">
+          <p className="text-[#6b6b6b]">No approvals found</p>
         </div>
       ) : (
         <div className="space-y-4">
           {filteredApprovals.map(approval => (
-            <div key={approval.id} className="bg-card border border-border rounded-lg p-4">
+            <div key={approval.id} className="bg-white border border-[#e8e8e8] rounded-lg p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                    <span className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                       {approval.type}
                     </span>
                     {getStatusBadge(approval.status)}
                   </div>
                   <p className="font-medium">{approval.request}</p>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-[#6b6b6b] mt-1">
                     {new Date(approval.createdAt).toLocaleString()}
                   </p>
                 </div>
@@ -156,7 +156,7 @@ export default function ApprovalsPage() {
                     <Button
                       size="sm"
                       onClick={() => handleApprove(approval, 'approved')}
-                      className="bg-green-500 hover:bg-green-600"
+                      className="bg-[#028901] hover:bg-[#026e01]"
                     >
                       <CheckCircle className="w-4 h-4 mr-1" />
                       Approve
@@ -174,8 +174,8 @@ export default function ApprovalsPage() {
               </div>
 
               {approval.context && (
-                <div className="bg-background rounded p-3 text-sm">
-                  <p className="text-muted-foreground text-xs mb-2">Context:</p>
+                <div className="bg-[#f5f6f8] rounded p-3 text-sm">
+                  <p className="text-[#6b6b6b] text-xs mb-2">Context:</p>
                   <pre className="overflow-x-auto text-xs">
                     {JSON.stringify(approval.context, null, 2)}
                   </pre>
@@ -183,11 +183,11 @@ export default function ApprovalsPage() {
               )}
 
               {approval.response && (
-                <div className="mt-3 p-3 bg-background rounded">
-                  <p className="text-xs text-muted-foreground mb-1">Response:</p>
+                <div className="mt-3 p-3 bg-[#f5f6f8] rounded">
+                  <p className="text-xs text-[#6b6b6b] mb-1">Response:</p>
                   <p className="text-sm">{approval.response}</p>
                   {approval.respondedAt && (
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-[#6b6b6b] mt-1">
                       {new Date(approval.respondedAt).toLocaleString()}
                     </p>
                   )}
@@ -209,7 +209,7 @@ export default function ApprovalsPage() {
             </Button>
             <Button
               onClick={submitResponse}
-              className={actionType === 'approved' ? 'bg-green-500 hover:bg-green-600' : ''}
+              className={actionType === 'approved' ? 'bg-[#028901] hover:bg-[#026e01]' : ''}
               variant={actionType === 'denied' ? 'danger' : 'default'}
             >
               Confirm {actionType === 'approved' ? 'Approval' : 'Denial'}
@@ -223,7 +223,7 @@ export default function ApprovalsPage() {
               <strong>Request:</strong> {selectedApproval?.request}
             </p>
             {selectedApproval?.context && (
-              <div className="bg-background rounded p-3 text-xs">
+              <div className="bg-[#f5f6f8] rounded p-3 text-xs">
                 <pre>{JSON.stringify(selectedApproval.context, null, 2)}</pre>
               </div>
             )}

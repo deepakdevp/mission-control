@@ -80,7 +80,7 @@ export default function MemoryPage() {
       });
 
       if (!res.ok) throw new Error('Failed to create memory');
-      
+
       await fetchMemories();
       setIsModalOpen(false);
       setFormData({
@@ -118,17 +118,17 @@ export default function MemoryPage() {
   };
 
   const categoryColors = {
-    personal: 'bg-purple-500/20 text-purple-400',
-    work: 'bg-blue-500/20 text-blue-400',
-    learning: 'bg-green-500/20 text-green-400',
-    idea: 'bg-yellow-500/20 text-yellow-400',
-    note: 'bg-gray-500/20 text-gray-400',
+    personal: 'bg-[#028901]/20 text-[#028901]',
+    work: 'bg-[#0057ff]/20 text-[#0057ff]',
+    learning: 'bg-[#7c3aed]/20 text-[#7c3aed]',
+    idea: 'bg-[#f97c00]/20 text-[#f97c00]',
+    note: 'bg-[#6b6b6b]/20 text-[#6b6b6b]',
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading memories...</div>
+        <div className="text-[#6b6b6b]">Loading memories...</div>
       </div>
     );
   }
@@ -145,7 +145,7 @@ export default function MemoryPage() {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" />
           <Input
             className="pl-10"
             placeholder="Search memories..."
@@ -168,9 +168,9 @@ export default function MemoryPage() {
       </div>
 
       {filteredMemories.length === 0 ? (
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <Brain className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground mb-4">
+        <div className="bg-white border border-[#e8e8e8] rounded-lg p-8 text-center">
+          <Brain className="w-12 h-12 mx-auto mb-4 text-[#6b6b6b]" />
+          <p className="text-[#6b6b6b] mb-4">
             {searchQuery ? 'No memories found' : 'No memories yet'}
           </p>
           {!searchQuery && (
@@ -182,7 +182,7 @@ export default function MemoryPage() {
           {filteredMemories.map(memory => (
             <div
               key={memory.id}
-              className="bg-card border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
+              className="bg-white border border-[#e8e8e8] rounded-lg p-4 hover:border-[#0057ff] transition-colors cursor-pointer"
               onClick={() => {
                 setSelectedMemory(memory);
                 setIsViewModalOpen(true);
@@ -191,7 +191,7 @@ export default function MemoryPage() {
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg">{memory.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                  <p className="text-sm text-[#6b6b6b] mt-1 line-clamp-2">
                     {memory.content}
                   </p>
                 </div>
@@ -203,12 +203,12 @@ export default function MemoryPage() {
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-1">
                   {memory.tags.map(tag => (
-                    <span key={tag} className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                    <span key={tag} className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                       {tag}
                     </span>
                   ))}
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-[#6b6b6b]">
                   {new Date(memory.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -284,7 +284,7 @@ export default function MemoryPage() {
               {formData.tags.map(tag => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded text-sm"
+                  className="inline-flex items-center gap-1 px-2 py-1 bg-[#0057ff]/10 text-[#0057ff] rounded text-sm"
                 >
                   {tag}
                   <button
@@ -331,7 +331,7 @@ export default function MemoryPage() {
               <span className={cn('text-xs px-2 py-1 rounded', categoryColors[selectedMemory.category])}>
                 {selectedMemory.category}
               </span>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-[#6b6b6b]">
                 {new Date(selectedMemory.createdAt).toLocaleString()}
               </span>
             </div>
@@ -343,9 +343,9 @@ export default function MemoryPage() {
             </div>
 
             {selectedMemory.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-[#e8e8e8]">
                 {selectedMemory.tags.map(tag => (
-                  <span key={tag} className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">
+                  <span key={tag} className="text-xs px-2 py-1 rounded bg-[#0057ff]/10 text-[#0057ff]">
                     {tag}
                   </span>
                 ))}

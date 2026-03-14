@@ -34,12 +34,12 @@ export default function ProjectsPage() {
         fetch('/api/projects'),
         fetch('/api/tasks'),
       ]);
-      
+
       if (!projectsRes.ok || !tasksRes.ok) throw new Error('Failed to fetch data');
-      
+
       const projectsData = await projectsRes.json();
       const tasksData = await tasksRes.json();
-      
+
       setProjects(projectsData);
       setTasks(tasksData);
     } catch (error) {
@@ -67,7 +67,7 @@ export default function ProjectsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to create project');
-      
+
       await fetchProjects();
       setIsModalOpen(false);
       setFormData({
@@ -90,22 +90,22 @@ export default function ProjectsPage() {
   const getProjectProgress = (projectId: string) => {
     const projectTasks = getProjectTasks(projectId);
     if (projectTasks.length === 0) return 0;
-    
+
     const completedTasks = projectTasks.filter(task => task.status === 'done').length;
     return Math.round((completedTasks / projectTasks.length) * 100);
   };
 
   const statusColors = {
-    planning: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-    active: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    paused: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    completed: 'bg-green-500/20 text-green-400 border-green-500/30',
+    planning: 'bg-[#f5f8ff] text-[#0057ff] border-[#0057ff]/30',
+    active: 'bg-[#f0faf0] text-[#028901] border-[#028901]/30',
+    paused: 'bg-[#fff8f0] text-[#f97c00] border-[#f97c00]/30',
+    completed: 'bg-[#f0f0f0] text-[#6b6b6b] border-[#6b6b6b]/30',
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading projects...</div>
+        <div className="text-[#6b6b6b]">Loading projects...</div>
       </div>
     );
   }
@@ -121,9 +121,9 @@ export default function ProjectsPage() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <FolderKanban className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground mb-4">No projects yet</p>
+        <div className="bg-white border border-[#e8e8e8] rounded-lg p-8 text-center">
+          <FolderKanban className="w-12 h-12 mx-auto mb-4 text-[#6b6b6b]" />
+          <p className="text-[#6b6b6b] mb-4">No projects yet</p>
           <Button onClick={() => setIsModalOpen(true)}>Create your first project</Button>
         </div>
       ) : (
@@ -131,17 +131,17 @@ export default function ProjectsPage() {
           {projects.map(project => {
             const progress = getProjectProgress(project.id);
             const projectTasks = getProjectTasks(project.id);
-            
+
             return (
               <div
                 key={project.id}
-                className="bg-card border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
+                className="bg-white border border-[#e8e8e8] rounded-lg p-4 hover:border-[#0057ff] transition-colors cursor-pointer"
                 onClick={() => setSelectedProject(project)}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <h3 className="font-semibold text-lg">{project.name}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                    <p className="text-sm text-[#6b6b6b] line-clamp-2 mt-1">
                       {project.description}
                     </p>
                   </div>
@@ -153,23 +153,23 @@ export default function ProjectsPage() {
                 <div className="space-y-3">
                   <div>
                     <div className="flex items-center justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">Progress</span>
+                      <span className="text-[#6b6b6b]">Progress</span>
                       <span className="font-medium">{progress}%</span>
                     </div>
-                    <div className="h-2 bg-background rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#f0f0f0] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-primary transition-all duration-300"
+                        className="h-full bg-[#0057ff] transition-all duration-300"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4 text-sm text-[#6b6b6b]">
                     <div className="flex items-center gap-1">
                       <CheckCircle2 className="w-4 h-4" />
                       <span>{projectTasks.length} tasks</span>
                     </div>
-                    
+
                     {project.startDate && (
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
@@ -181,7 +181,7 @@ export default function ProjectsPage() {
                   {project.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {project.tags.map(tag => (
-                        <span key={tag} className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                        <span key={tag} className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                           {tag}
                         </span>
                       ))}
@@ -272,27 +272,27 @@ export default function ProjectsPage() {
         >
           <div className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground">{selectedProject.description}</p>
+              <p className="text-sm text-[#6b6b6b]">{selectedProject.description}</p>
             </div>
 
             <div>
               <h3 className="font-semibold mb-2">Tasks</h3>
               <div className="space-y-2">
                 {getProjectTasks(selectedProject.id).map(task => (
-                  <div key={task.id} className="p-2 bg-background rounded border border-border">
+                  <div key={task.id} className="p-2 bg-[#f5f6f8] rounded border border-[#e8e8e8]">
                     <p className="text-sm font-medium">{task.title}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                      <span className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                         {task.status}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded bg-secondary">
+                      <span className="text-xs px-2 py-0.5 rounded bg-[#f5f6f8]">
                         {task.priority}
                       </span>
                     </div>
                   </div>
                 ))}
                 {getProjectTasks(selectedProject.id).length === 0 && (
-                  <p className="text-sm text-muted-foreground">No tasks yet</p>
+                  <p className="text-sm text-[#6b6b6b]">No tasks yet</p>
                 )}
               </div>
             </div>

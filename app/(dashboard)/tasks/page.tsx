@@ -37,7 +37,7 @@ export default function TasksPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading tasks...</div>
+        <div className="text-[#6b6b6b]">Loading tasks...</div>
       </div>
     );
   }
@@ -51,7 +51,7 @@ export default function TasksPage() {
       {/* Filters */}
       <div className="grid grid-cols-3 gap-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" />
           <Input
             className="pl-10"
             placeholder="Search tasks..."
@@ -61,7 +61,7 @@ export default function TasksPage() {
         </div>
 
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" />
           <Select
             className="pl-10"
             value={filterPriority}

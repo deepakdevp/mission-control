@@ -48,7 +48,7 @@ export default function DocsPage() {
 
   const documentTree = useMemo(() => {
     const tree: Record<string, Document[]> = {};
-    
+
     documents.forEach(doc => {
       const folder = doc.path || '/';
       if (!tree[folder]) tree[folder] = [];
@@ -60,7 +60,7 @@ export default function DocsPage() {
 
   const filteredDocuments = useMemo(() => {
     if (!searchQuery) return documents;
-    
+
     return documents.filter(doc =>
       doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doc.content.toLowerCase().includes(searchQuery.toLowerCase())
@@ -76,7 +76,7 @@ export default function DocsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to create document');
-      
+
       await fetchDocuments();
       setIsModalOpen(false);
       setFormData({
@@ -106,7 +106,7 @@ export default function DocsPage() {
       });
 
       if (!res.ok) throw new Error('Failed to update document');
-      
+
       await fetchDocuments();
       setIsEditing(false);
       const updated = await res.json();
@@ -147,7 +147,7 @@ export default function DocsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-muted-foreground">Loading documents...</div>
+        <div className="text-[#6b6b6b]">Loading documents...</div>
       </div>
     );
   }
@@ -163,7 +163,7 @@ export default function DocsPage() {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#6b6b6b]" />
         <Input
           className="pl-10"
           placeholder="Search documents..."
@@ -177,19 +177,19 @@ export default function DocsPage() {
           {filteredDocuments.map(doc => (
             <div
               key={doc.id}
-              className="bg-card border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
+              className="bg-white border border-[#e8e8e8] rounded-lg p-4 hover:border-[#0057ff] transition-colors cursor-pointer"
               onClick={() => openDocument(doc)}
             >
               <div className="flex items-start gap-3">
-                <FileText className="w-5 h-5 text-primary mt-0.5" />
+                <FileText className="w-5 h-5 text-[#0057ff] mt-0.5" />
                 <div className="flex-1">
                   <h3 className="font-semibold">{doc.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                  <p className="text-sm text-[#6b6b6b] line-clamp-2 mt-1">
                     {doc.content}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs text-muted-foreground">{doc.path}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-[#6b6b6b]">{doc.path}</span>
+                    <span className="text-xs text-[#6b6b6b]">
                       {new Date(doc.updatedAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -200,17 +200,17 @@ export default function DocsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-6">
-          <div className="col-span-1 bg-card border border-border rounded-lg p-4">
+          <div className="col-span-1 bg-white border border-[#e8e8e8] rounded-lg p-4">
             <h2 className="font-semibold mb-3 flex items-center gap-2">
               <Folder className="w-4 h-4" />
               Folders
             </h2>
             <div className="space-y-1">
               {Object.keys(documentTree).map(folder => (
-                <div key={folder} className="text-sm p-2 hover:bg-background rounded cursor-pointer">
+                <div key={folder} className="text-sm p-2 hover:bg-[#f5f6f8] rounded cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span>{folder}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-[#6b6b6b]">
                       {documentTree[folder].length}
                     </span>
                   </div>
@@ -221,9 +221,9 @@ export default function DocsPage() {
 
           <div className="col-span-3">
             {documents.length === 0 ? (
-              <div className="bg-card border border-border rounded-lg p-8 text-center">
-                <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground mb-4">No documents yet</p>
+              <div className="bg-white border border-[#e8e8e8] rounded-lg p-8 text-center">
+                <FileText className="w-12 h-12 mx-auto mb-4 text-[#6b6b6b]" />
+                <p className="text-[#6b6b6b] mb-4">No documents yet</p>
                 <Button onClick={() => setIsModalOpen(true)}>Create your first document</Button>
               </div>
             ) : (
@@ -231,19 +231,19 @@ export default function DocsPage() {
                 {documents.map(doc => (
                   <div
                     key={doc.id}
-                    className="bg-card border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer"
+                    className="bg-white border border-[#e8e8e8] rounded-lg p-4 hover:border-[#0057ff] transition-colors cursor-pointer"
                     onClick={() => openDocument(doc)}
                   >
                     <div className="flex items-start gap-3">
-                      <FileText className="w-5 h-5 text-primary mt-0.5" />
+                      <FileText className="w-5 h-5 text-[#0057ff] mt-0.5" />
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold truncate">{doc.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                        <p className="text-sm text-[#6b6b6b] line-clamp-2 mt-1">
                           {doc.content.substring(0, 100)}...
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           {doc.tags.slice(0, 2).map(tag => (
-                            <span key={tag} className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                            <span key={tag} className="text-xs px-2 py-0.5 rounded bg-[#0057ff]/10 text-[#0057ff]">
                               {tag}
                             </span>
                           ))}
@@ -369,7 +369,7 @@ export default function DocsPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-[#6b6b6b]">
                 <span>{selectedDoc.path}</span>
                 <span className="mx-2">•</span>
                 <span>{new Date(selectedDoc.updatedAt).toLocaleString()}</span>
@@ -382,9 +382,9 @@ export default function DocsPage() {
               </div>
 
               {selectedDoc.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-[#e8e8e8]">
                   {selectedDoc.tags.map(tag => (
-                    <span key={tag} className="text-xs px-2 py-1 rounded bg-primary/10 text-primary">
+                    <span key={tag} className="text-xs px-2 py-1 rounded bg-[#0057ff]/10 text-[#0057ff]">
                       {tag}
                     </span>
                   ))}

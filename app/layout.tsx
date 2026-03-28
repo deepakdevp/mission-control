@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className={`${inter.variable} font-sans md:pl-[230px]`}>
+      <body className={`${inter.variable} font-sans md:pl-[280px]`}>
         <Navigation />
         <main className="min-h-screen">
           {children}

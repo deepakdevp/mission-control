@@ -122,11 +122,33 @@ export default function PortfolioPage() {
     }, [data]);
 
     if (isLoading) {
-        return <div className="p-8">Loading complete portfolio...</div>;
+        return (
+          <div>
+            <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-10">
+              <div className="h-14 px-6 flex items-center">
+                <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Investment Portfolio</h1>
+              </div>
+            </div>
+            <div className="px-8 py-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="card animate-pulse">
+                    <div className="h-3 w-24 bg-gray-100 rounded mb-3" />
+                    <div className="h-7 w-32 bg-gray-100 rounded" />
+                  </div>
+                ))}
+              </div>
+              <div className="card animate-pulse space-y-3">
+                <div className="h-4 w-24 bg-gray-100 rounded" />
+                {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-3 w-full bg-gray-100 rounded" />)}
+              </div>
+            </div>
+          </div>
+        );
     }
 
     if (!data) {
-        return <div className="p-8">Could not load portfolio data. Check if all JSON files are present in /public.</div>;
+        return <div className="p-8 text-[var(--text-secondary)]">Could not load portfolio data. Check if all JSON files are present in /public.</div>;
     }
 
     const totalUsdGainPercent = (data.usStocks.totalGainUsd / (data.usStocks.totalValueUsd - data.usStocks.totalGainUsd)) * 100;

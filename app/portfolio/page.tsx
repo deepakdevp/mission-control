@@ -1,289 +1,418 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import Image from 'next/image';
+import { PageHeader } from '@/components/page-header';
+import { KPICard } from '@/components/dashboard/kpi-card';
+import { TrendingUp, Bitcoin, BarChart2, PieChart, DollarSign } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // --- TYPES ---
 interface BinanceHolding {
-  symbol: string; name: string; amount: number; valueUsd: number; logo: string;
+  symbol: string;
+  name: string;
+  amount: number;
+  valueUsd: number;
+  logo: string;
 }
+
 interface ZerodhaHolding {
-  symbol: string; name: string; amount: number; valueInr: number; pnlPercentage: number;
+  symbol: string;
+  name: string;
+  amount: number;
+  valueInr: number;
+  pnlPercentage: number;
 }
+
 interface USStockHolding {
-  Symbol: string; Name: string; Quantity: number; "Market Value (USD)": number; "Gain (USD)": number; "Gain (%)": number;
+  Symbol: string;
+  Name: string;
+  Quantity: number;
+  'Market Value (USD)': number;
+  'Gain (USD)': number;
+  'Gain (%)': number;
 }
+
 interface MutualFundHolding {
-  scheme_name: string; units: number; nav: number; current_value: number;
+  scheme_name: string;
+  units: number;
+  nav: number;
+  current_value: number;
 }
 
 interface PortfolioData {
-  binance: { totalValueUsd: number; holdings: BinanceHolding[]; };
-  zerodha: { totalValueInr: number; holdings: ZerodhaHolding[]; };
-  usStocks: { totalValueUsd: number; totalGainUsd: number; holdings: USStockHolding[]; };
-  mutualFunds: { totalValueInr: number; holdings: MutualFundHolding[]; };
+  binance: { totalValueUsd: number; holdings: BinanceHolding[] };
+  zerodha: { totalValueInr: number; holdings: ZerodhaHolding[] };
+  usStocks: { totalValueUsd: number; totalGainUsd: number; holdings: USStockHolding[] };
+  mutualFunds: { totalValueInr: number; holdings: MutualFundHolding[] };
 }
 
-// --- API FUNCTION ---
+// --- HELPERS ---
+function fmtUsd(n: number): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(n);
+}
+
+function fmtInr(n: number): string {
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2)}Cr`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(2)}L`;
+  return `₹${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(n)}`;
+}
+
 async function fetchPortfolio(): Promise<PortfolioData> {
   const [binanceRes, zerodhaRes, usStocksRes, mutualFundsRes] = await Promise.all([
-    fetch('/binance-portfolio.json'),
-    fetch('/zerodha-portfolio.json'),
-    fetch('/us-stocks.json'),
-    fetch('/mutual_funds.json')
+    fetch('/binance-portfolio.json').catch(() => null),
+    fetch('/zerodha-portfolio.json').catch(() => null),
+    fetch('/us-stocks.json').catch(() => null),
+    fetch('/mutual_funds.json').catch(() => null),
   ]);
 
-  if (!binanceRes.ok || !zerodhaRes.ok || !usStocksRes.ok || !mutualFundsRes.ok) {
-    throw new Error('Failed to fetch one or more portfolio data files');
-  }
+  const binanceData = binanceRes?.ok ? await binanceRes.json() : {};
+  const zerodhaData = zerodhaRes?.ok ? await zerodhaRes.json() : {};
+  const usStocksData = usStocksRes?.ok ? await usStocksRes.json() : {};
+  const mutualFundsData = mutualFundsRes?.ok ? await mutualFundsRes.json() : {};
 
-  const binanceData = await binanceRes.json();
-  const zerodhaData = await zerodhaRes.json();
-  const usStocksData = await usStocksRes.json();
-  const mutualFundsData = await mutualFundsRes.json();
+  const usStocksHoldings: USStockHolding[] = usStocksData.holdings || [];
+  const totalUsStocksValue = usStocksHoldings.reduce((a, h) => a + (h['Market Value (USD)'] || 0), 0);
+  const totalUsStocksGain = usStocksHoldings.reduce((a, h) => a + (h['Gain (USD)'] || 0), 0);
 
-  const usStocksHoldings = usStocksData.holdings || [];
-  const totalUsStocksValue = usStocksHoldings.reduce((acc: number, h: USStockHolding) => acc + h["Market Value (USD)"], 0);
-  const totalUsStocksGain = usStocksHoldings.reduce((acc: number, h: USStockHolding) => acc + h["Gain (USD)"], 0);
-  
-  const mutualFundsHoldings = mutualFundsData.holdings || [];
-  const totalMutualFundsValue = mutualFundsHoldings.reduce((acc: number, h: MutualFundHolding) => acc + h.current_value, 0);
+  const mutualFundsHoldings: MutualFundHolding[] = mutualFundsData.holdings || [];
+  const totalMutualFundsValue = mutualFundsHoldings.reduce((a, h) => a + (h.current_value || 0), 0);
 
-  const portfolio = {
-      binance: {
-          totalValueUsd: binanceData.total_value_usd || 0,
-          holdings: binanceData.assets?.map((asset: any) => ({
-              symbol: asset.asset, name: asset.asset_name, amount: parseFloat(asset.total_balance), valueUsd: parseFloat(asset.value_usd), logo: asset.logo_url
-          })) || [],
-      },
-      zerodha: {
-          totalValueInr: zerodhaData.total_value_inr || 0,
-          holdings: zerodhaData.holdings?.map((holding: any) => ({
-              symbol: holding.tradingsymbol, name: holding.instrument_token, amount: parseFloat(holding.quantity), valueInr: parseFloat(holding.last_price) * parseFloat(holding.quantity), pnlPercentage: parseFloat(holding.pnl_percentage)
-          })) || [],
-      },
-      usStocks: {
-          totalValueUsd: totalUsStocksValue,
-          totalGainUsd: totalUsStocksGain,
-          holdings: usStocksHoldings,
-      },
-      mutualFunds: {
-          totalValueInr: totalMutualFundsValue,
-          holdings: mutualFundsHoldings,
-      }
+  return {
+    binance: {
+      totalValueUsd: binanceData.total_value_usd || 0,
+      holdings: (binanceData.assets || []).map((a: Record<string, string>) => ({
+        symbol: a.asset,
+        name: a.asset_name,
+        amount: parseFloat(a.total_balance) || 0,
+        valueUsd: parseFloat(a.value_usd) || 0,
+        logo: a.logo_url || '',
+      })),
+    },
+    zerodha: {
+      totalValueInr: zerodhaData.total_value_inr || 0,
+      holdings: (zerodhaData.holdings || []).map((h: Record<string, string>) => ({
+        symbol: h.tradingsymbol,
+        name: h.instrument_token,
+        amount: parseFloat(h.quantity) || 0,
+        valueInr: (parseFloat(h.last_price) || 0) * (parseFloat(h.quantity) || 0),
+        pnlPercentage: parseFloat(h.pnl_percentage) || 0,
+      })),
+    },
+    usStocks: {
+      totalValueUsd: totalUsStocksValue,
+      totalGainUsd: totalUsStocksGain,
+      holdings: usStocksHoldings,
+    },
+    mutualFunds: {
+      totalValueInr: totalMutualFundsValue,
+      holdings: mutualFundsHoldings,
+    },
+  };
+}
+
+// --- TABS ---
+const TABS = ['Crypto', 'US Stocks', 'Mutual Funds', 'Indian Stocks'] as const;
+type Tab = typeof TABS[number];
+
+// --- SORTABLE TABLE HEADER ---
+function SortHeader({ label, field, sortBy, onSort }: {
+  label: string;
+  field: string;
+  sortBy: { field: string; dir: 'asc' | 'desc' };
+  onSort: (f: string) => void;
+}) {
+  return (
+    <th
+      onClick={() => onSort(field)}
+      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:text-gray-700 select-none"
+    >
+      {label}
+      {sortBy.field === field && (
+        <span className="ml-1">{sortBy.dir === 'asc' ? '↑' : '↓'}</span>
+      )}
+    </th>
+  );
+}
+
+// --- MAIN ---
+export default function PortfolioPage() {
+  const [data, setData] = useState<PortfolioData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<Tab>('Crypto');
+  const [sortBy, setSortBy] = useState<{ field: string; dir: 'asc' | 'desc' }>({ field: 'value', dir: 'desc' });
+
+  useEffect(() => {
+    fetchPortfolio()
+      .then(setData)
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const handleSort = (field: string) => {
+    setSortBy(prev => ({ field, dir: prev.field === field && prev.dir === 'asc' ? 'desc' : 'asc' }));
   };
 
-  return portfolio;
-}
+  const totalUsdGainPct = data && data.usStocks.totalValueUsd > 0
+    ? ((data.usStocks.totalGainUsd / (data.usStocks.totalValueUsd - data.usStocks.totalGainUsd)) * 100)
+    : 0;
 
-
-// --- HELPER COMPONENTS ---
-function StatCard({ title, value, subtitle, gain, gainColor }: { title: string; value: string; subtitle?: string; gain?: string; gainColor?: string }) {
+  if (isLoading) {
     return (
-        <div className="card">
-            <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-            <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-bold text-[#1A1A2E] mt-1">{value}</p>
-              {gain && <p className={`text-sm font-semibold ${gainColor}`}>{gain}</p>}
-            </div>
-            {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
-        </div>
-    );
-}
-
-const COLORS = ['#5B4EE8', '#10B981', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6'];
-
-// --- MAIN PAGE COMPONENT ---
-export default function PortfolioPage() {
-    const [data, setData] = useState<PortfolioData | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const loadData = async () => {
-            setIsLoading(true);
-            try {
-                const portfolioData = await fetchPortfolio();
-                setData(portfolioData);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        loadData();
-    }, []);
-
-    const chartData = useMemo(() => {
-        if (!data) return [];
-        // A simple combined chart would require currency conversion.
-        // For now, let's stick to crypto allocation.
-        return data.binance.holdings.map(h => ({ name: h.symbol, value: h.valueUsd }));
-    }, [data]);
-
-    if (isLoading) {
-        return <div className="p-8">Loading complete portfolio...</div>;
-    }
-
-    if (!data) {
-        return <div className="p-8">Could not load portfolio data. Check if all JSON files are present in /public.</div>;
-    }
-
-    const totalUsdGainPercent = (data.usStocks.totalGainUsd / (data.usStocks.totalValueUsd - data.usStocks.totalGainUsd)) * 100;
-
-  return (
-    <div>
-      {/* Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-10">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Investment Portfolio</h1>
+      <div className="min-h-screen bg-gray-50">
+        <PageHeader title="Investment Portfolio" description="Track your investments across all platforms" />
+        <div className="px-6 py-6 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-6 animate-pulse space-y-3">
+                <div className="w-10 h-10 bg-gray-100 rounded-lg" />
+                <div className="h-3 w-24 bg-gray-100 rounded" />
+                <div className="h-7 w-32 bg-gray-100 rounded" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Main Content */}
-      <div className="px-8 py-6 space-y-6">
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <StatCard 
-                title="US Stocks" 
-                value={`$${data.usStocks.totalValueUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-                gain={`+$${data.usStocks.totalGainUsd.toFixed(2)} (${totalUsdGainPercent.toFixed(2)}%)`}
-                gainColor="text-green-600"
-            />
-            <StatCard 
-                title="Mutual Funds (India)" 
-                value={`₹${data.mutualFunds.totalValueInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            />
-            <StatCard 
-                title="Crypto (Binance)" 
-                value={`$${data.binance.totalValueUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            />
-            <StatCard 
-                title="Indian Stocks (Zerodha)" 
-                value={`₹${data.zerodha.totalValueInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            />
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <PageHeader title="Investment Portfolio" />
+        <div className="px-6 py-12 text-center">
+          <p className="text-gray-500">Could not load portfolio data. Check if JSON files are in /public.</p>
         </div>
-        
-        {/* US Stocks */}
-        <div className="card">
-            <h2 className="text-lg font-semibold text-[#1A1A2E] mb-4">US Stocks</h2>
-            <div className="overflow-x-auto max-h-96">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="border-b text-left text-xs text-gray-500 uppercase">
-                            <th className="py-2">Symbol</th>
-                            <th>Quantity</th>
-                            <th>Market Value (USD)</th>
-                            <th className="text-right">Gain (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.usStocks.holdings.map(h => (
-                            <tr key={h.Symbol} className="border-b">
-                                <td className="py-2 font-bold">{h.Symbol} <span className="font-normal text-gray-400">{h.Name}</span></td>
-                                <td>{h.Quantity}</td>
-                                <td>${h["Market Value (USD)"].toFixed(2)}</td>
-                                <td className={`text-right font-medium ${h["Gain (%)"] >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                    {h["Gain (%)"].toFixed(2)}%
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        {/* Mutual Funds */}
-        <div className="card">
-            <h2 className="text-lg font-semibold text-[#1A1A2E] mb-4">Mutual Funds (India)</h2>
-            <div className="overflow-x-auto max-h-96">
-                <table className="w-full text-sm">
-                    <thead>
-                        <tr className="border-b text-left text-xs text-gray-500 uppercase">
-                            <th className="py-2">Scheme Name</th>
-                            <th>Units</th>
-                            <th className="text-right">Current Value (INR)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.mutualFunds.holdings.map(h => (
-                            <tr key={h.scheme_name} className="border-b">
-                                <td className="py-2 font-bold">{h.scheme_name}</td>
-                                <td>{h.units.toFixed(4)}</td>
-                                <td className="text-right">₹{h.current_value.toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader title="Investment Portfolio" description="Track your investments across all platforms" />
+
+      <div className="px-6 py-6 space-y-6">
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICard
+            title="Crypto (Binance)"
+            value={fmtUsd(data.binance.totalValueUsd)}
+            change="Binance"
+            changeType="neutral"
+            icon={<Bitcoin className="w-5 h-5" />}
+            iconBg="bg-amber-50"
+            iconColor="text-amber-600"
+          />
+          <KPICard
+            title="US Stocks"
+            value={fmtUsd(data.usStocks.totalValueUsd)}
+            change={data.usStocks.totalGainUsd >= 0 ? `+${totalUsdGainPct.toFixed(1)}%` : `${totalUsdGainPct.toFixed(1)}%`}
+            changeType={data.usStocks.totalGainUsd >= 0 ? 'positive' : 'negative'}
+            icon={<TrendingUp className="w-5 h-5" />}
+            iconBg="bg-blue-50"
+            iconColor="text-blue-600"
+          />
+          <KPICard
+            title="Mutual Funds"
+            value={fmtInr(data.mutualFunds.totalValueInr)}
+            change="India"
+            changeType="neutral"
+            icon={<PieChart className="w-5 h-5" />}
+            iconBg="bg-green-50"
+            iconColor="text-green-600"
+          />
+          <KPICard
+            title="Indian Stocks (Zerodha)"
+            value={data.zerodha.totalValueInr > 0 ? fmtInr(data.zerodha.totalValueInr) : '–'}
+            change="Zerodha"
+            changeType="neutral"
+            icon={<BarChart2 className="w-5 h-5" />}
+            iconBg="bg-purple-50"
+            iconColor="text-purple-600"
+          />
         </div>
 
-        {/* Binance Crypto Holdings */}
-        <div className="card">
-            <h2 className="text-lg font-semibold text-[#1A1A2E] mb-4">Binance Holdings (Crypto)</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-1 h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
-                                {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
-                            </Pie>
-                            <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </div>
-                <div className="md:col-span-2 max-h-64 overflow-y-auto">
-                    <table className="w-full text-sm text-left">
-                        {data.binance.holdings.map(h => (
-                            <tr key={h.symbol} className="border-b">
-                                <td className="py-2 flex items-center gap-3">
-                                    <Image src={h.logo} alt={h.name} width={24} height={24} className="rounded-full" />
-                                    <div>
-                                        <p className="font-bold">{h.symbol}</p>
-                                        <p className="text-xs text-gray-500">{h.name}</p>
-                                    </div>
-                                </td>
-                                <td>{h.amount.toFixed(6)}</td>
-                                <td className="text-right font-medium">${h.valueUsd.toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </table>
-                </div>
+        {/* Tabs + Table */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          {/* Tab Bar */}
+          <div className="border-b border-gray-200 px-6">
+            <div className="flex gap-1">
+              {TABS.map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={cn(
+                    'px-4 py-3.5 text-sm font-medium border-b-2 transition-colors',
+                    activeTab === tab
+                      ? 'border-blue-600 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  )}
+                >
+                  {tab}
+                </button>
+              ))}
             </div>
-        </div>
+          </div>
 
-        {/* Zerodha Stock Holdings */}
-        <div className="card">
-            <h2 className="text-lg font-semibold text-[#1A1A2E] mb-4">Zerodha Holdings (Indian Stocks)</h2>
-            {data.zerodha.holdings.length > 0 ? (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b text-left text-xs text-gray-500 uppercase">
-                                <th className="py-2">Symbol</th>
-                                <th>Quantity</th>
-                                <th>Value (INR)</th>
-                                <th className="text-right">P&L (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.zerodha.holdings.map(h => (
-                                <tr key={h.symbol} className="border-b">
-                                    <td className="py-2 font-bold">{h.symbol}</td>
-                                    <td>{h.amount}</td>
-                                    <td>₹{h.valueInr.toFixed(2)}</td>
-                                    <td className={`text-right font-medium ${h.pnlPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                        {h.pnlPercentage.toFixed(2)}%
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            ) : (
-                <p className="text-sm text-gray-500 text-center py-4">No Indian stocks held in Zerodha account.</p>
+          {/* Tab Content */}
+          <div className="overflow-x-auto">
+            {activeTab === 'Crypto' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Asset</th>
+                    <SortHeader label="Amount" field="amount" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="Value (USD)" field="value" sortBy={sortBy} onSort={handleSort} />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.binance.holdings.length === 0 ? (
+                    <tr><td colSpan={3} className="py-12 text-center text-sm text-gray-400">No crypto holdings</td></tr>
+                  ) : [...data.binance.holdings]
+                    .sort((a, b) => sortBy.dir === 'desc' ? b.valueUsd - a.valueUsd : a.valueUsd - b.valueUsd)
+                    .map(h => (
+                      <tr key={h.symbol} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            {h.logo ? (
+                              <Image src={h.logo} alt={h.name || h.symbol} width={28} height={28} className="rounded-full" />
+                            ) : (
+                              <div className="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center text-xs font-bold text-gray-500">
+                                {h.symbol.slice(0, 2)}
+                              </div>
+                            )}
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">{h.symbol}</p>
+                              <p className="text-xs text-gray-400">{h.name}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{h.amount.toFixed(6)}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-900">{fmtUsd(h.valueUsd)}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             )}
+
+            {activeTab === 'US Stocks' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Stock</th>
+                    <SortHeader label="Qty" field="qty" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="Market Value" field="value" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="Gain (%)" field="gain" sortBy={sortBy} onSort={handleSort} />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.usStocks.holdings.length === 0 ? (
+                    <tr><td colSpan={4} className="py-12 text-center text-sm text-gray-400">No US stock holdings</td></tr>
+                  ) : [...data.usStocks.holdings]
+                    .sort((a, b) => {
+                      const aV = sortBy.field === 'qty' ? a.Quantity : sortBy.field === 'gain' ? a['Gain (%)'] : a['Market Value (USD)'];
+                      const bV = sortBy.field === 'qty' ? b.Quantity : sortBy.field === 'gain' ? b['Gain (%)'] : b['Market Value (USD)'];
+                      return sortBy.dir === 'desc' ? bV - aV : aV - bV;
+                    })
+                    .map(h => (
+                      <tr key={h.Symbol} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-semibold text-gray-900">{h.Symbol}</p>
+                          <p className="text-xs text-gray-400 truncate max-w-xs">{h.Name}</p>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{h.Quantity}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-900">{fmtUsd(h['Market Value (USD)'])}</td>
+                        <td className="px-4 py-3">
+                          <span className={cn(
+                            'text-sm font-semibold',
+                            h['Gain (%)'] >= 0 ? 'text-green-600' : 'text-red-600'
+                          )}>
+                            {h['Gain (%)'] >= 0 ? '+' : ''}{h['Gain (%)'].toFixed(2)}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            )}
+
+            {activeTab === 'Mutual Funds' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Scheme</th>
+                    <SortHeader label="Units" field="units" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="NAV" field="nav" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="Current Value" field="value" sortBy={sortBy} onSort={handleSort} />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.mutualFunds.holdings.length === 0 ? (
+                    <tr><td colSpan={4} className="py-12 text-center text-sm text-gray-400">No mutual fund holdings</td></tr>
+                  ) : [...data.mutualFunds.holdings]
+                    .sort((a, b) => {
+                      const aV = sortBy.field === 'units' ? a.units : sortBy.field === 'nav' ? a.nav : a.current_value;
+                      const bV = sortBy.field === 'units' ? b.units : sortBy.field === 'nav' ? b.nav : b.current_value;
+                      return sortBy.dir === 'desc' ? bV - aV : aV - bV;
+                    })
+                    .map(h => (
+                      <tr key={h.scheme_name} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-semibold text-gray-900 max-w-xs">{h.scheme_name}</p>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{h.units.toFixed(4)}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">₹{h.nav.toFixed(2)}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-900">₹{h.current_value.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            )}
+
+            {activeTab === 'Indian Stocks' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Symbol</th>
+                    <SortHeader label="Qty" field="qty" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="Value (INR)" field="value" sortBy={sortBy} onSort={handleSort} />
+                    <SortHeader label="P&L (%)" field="pnl" sortBy={sortBy} onSort={handleSort} />
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.zerodha.holdings.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="py-12 text-center">
+                        <p className="text-sm text-gray-500">No Indian stocks held in Zerodha account</p>
+                      </td>
+                    </tr>
+                  ) : [...data.zerodha.holdings]
+                    .sort((a, b) => {
+                      const aV = sortBy.field === 'qty' ? a.amount : sortBy.field === 'pnl' ? a.pnlPercentage : a.valueInr;
+                      const bV = sortBy.field === 'qty' ? b.amount : sortBy.field === 'pnl' ? b.pnlPercentage : b.valueInr;
+                      return sortBy.dir === 'desc' ? bV - aV : aV - bV;
+                    })
+                    .map(h => (
+                      <tr key={h.symbol} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3">
+                          <p className="text-sm font-semibold text-gray-900">{h.symbol}</p>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{h.amount}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-900">{fmtInr(h.valueInr)}</td>
+                        <td className="px-4 py-3">
+                          <span className={cn(
+                            'text-sm font-semibold',
+                            h.pnlPercentage >= 0 ? 'text-green-600' : 'text-red-600'
+                          )}>
+                            {h.pnlPercentage >= 0 ? '+' : ''}{h.pnlPercentage.toFixed(2)}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
     </div>

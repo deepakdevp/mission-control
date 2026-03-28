@@ -5,6 +5,7 @@ import { ApprovalCard } from '@/components/approval-card'
 import { Loading } from '@/components/ui/loading'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Shield, Filter } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 import { toast } from 'sonner'
 
 interface Approval {
@@ -103,35 +104,24 @@ export default function ApprovalsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-base p-8">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-text-primary mb-2">
-              Approvals
-              {pendingCount > 0 && (
-                <span className="ml-3 px-3 py-1 bg-warning/20 text-warning rounded-full text-sm">
-                  {pendingCount} pending
-                </span>
-              )}
-            </h1>
-            <p className="text-text-secondary">
-              Review and approve high-risk actions before they're executed
-            </p>
-          </div>
-
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title={`Approvals${pendingCount > 0 ? ` (${pendingCount} pending)` : ''}`}
+        description="Review and approve high-risk actions before they're executed"
+        actions={
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="denied">Denied</option>
           </select>
-        </div>
+        }
+      />
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
 
         {/* Approvals List */}
         {filteredApprovals.length > 0 ? (

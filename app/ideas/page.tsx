@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Plus, Edit, Trash, MoreHorizontal } from 'lucide-react';
-
-import { useRouter } from 'next/navigation';
+import { Plus, Edit, Trash2, MoreVertical, Lightbulb, Calendar, Tag, X } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
+import { cn } from '@/lib/utils';
 
 // --- TYPES ---
 interface Idea {
@@ -40,7 +40,7 @@ async function fetchIdeas(): Promise<Idea[]> {
 }
 
 async function createIdea(data: IdeaFormData): Promise<Idea> {
-  const tagsArray = data.tags ? data.tags.split(',').map(tag => tag.trim()) : [];
+  const tagsArray = data.tags ? data.tags.split(',').map(tag => tag.trim()).filter(Boolean) : [];
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -51,14 +51,14 @@ async function createIdea(data: IdeaFormData): Promise<Idea> {
 }
 
 async function updateIdea(id: string, data: IdeaFormData): Promise<Idea> {
-    const tagsArray = data.tags ? data.tags.split(',').map(tag => tag.trim()) : [];
-    const res = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, tags: tagsArray }),
-    });
-    if (!res.ok) throw new Error('Failed to update idea');
-    return res.json();
+  const tagsArray = data.tags ? data.tags.split(',').map(tag => tag.trim()).filter(Boolean) : [];
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...data, tags: tagsArray }),
+  });
+  if (!res.ok) throw new Error('Failed to update idea');
+  return res.json();
 }
 
 async function deleteIdea(id: string): Promise<void> {
@@ -66,17 +66,128 @@ async function deleteIdea(id: string): Promise<void> {
   if (!res.ok) throw new Error('Failed to delete idea');
 }
 
-// --- COMPONENTS ---
+// --- STATUS CONFIG ---
+const STATUS_CONFIG: Record<string, { text: string; bg: string }> = {
+  'Idea':        { text: 'text-gray-600',  bg: 'bg-gray-100' },
+  'Researching': { text: 'text-blue-700',  bg: 'bg-blue-50' },
+  'Validating':  { text: 'text-amber-700', bg: 'bg-amber-50' },
+  'Building':    { text: 'text-green-700', bg: 'bg-green-50' },
+};
 
-function IdeaForm({ idea, onSave, onCancel }: { idea?: Idea; onSave: () => void; onCancel: () => void; }) {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<IdeaFormData>({
+function parseTags(raw: string | null): string[] {
+  if (!raw) return [];
+  try { return JSON.parse(raw); } catch { return []; }
+}
+
+// --- CONFIDENCE DOTS ---
+function ConfidenceMeter({ value }: { value: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: 10 }, (_, i) => (
+        <div
+          key={i}
+          className={cn(
+            'w-2 h-2 rounded-full',
+            i < value
+              ? value >= 8 ? 'bg-green-500' : value >= 5 ? 'bg-blue-500' : 'bg-amber-400'
+              : 'bg-gray-200'
+          )}
+        />
+      ))}
+      <span className="text-xs text-gray-400 ml-1">{value}/10</span>
+    </div>
+  );
+}
+
+// --- IDEA CARD ---
+function IdeaCard({ idea, onEdit, onDelete }: { idea: Idea; onEdit: (idea: Idea) => void; onDelete: (id: string) => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const tags = parseTags(idea.tags);
+  const statusCfg = STATUS_CONFIG[idea.status] || STATUS_CONFIG.Idea;
+  const dateStr = new Date(idea.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col gap-3">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-semibold text-gray-900 leading-snug">{idea.name}</h3>
+        </div>
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <MoreVertical className="w-4 h-4" />
+          </button>
+          {menuOpen && (
+            <div
+              className="absolute right-0 top-8 z-20 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[120px]"
+              onMouseLeave={() => setMenuOpen(false)}
+            >
+              <button
+                onClick={() => { onEdit(idea); setMenuOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <Edit className="w-3.5 h-3.5" /> Edit
+              </button>
+              <button
+                onClick={() => { onDelete(idea.id); setMenuOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Description */}
+      <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{idea.description}</p>
+
+      {/* Status badge */}
+      <span className={cn('self-start inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium', statusCfg.bg, statusCfg.text)}>
+        {idea.status}
+      </span>
+
+      {/* Confidence */}
+      <ConfidenceMeter value={idea.confidence} />
+
+      {/* Tags */}
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {tags.map(tag => (
+            <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
+              <Tag className="w-2.5 h-2.5" />
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="flex items-center gap-1 text-xs text-gray-400 mt-auto pt-2 border-t border-gray-100">
+        <Calendar className="w-3 h-3" />
+        {dateStr}
+      </div>
+    </div>
+  );
+}
+
+// --- MODAL FORM ---
+function IdeaModal({ idea, onSave, onCancel }: { idea?: Idea; onSave: () => void; onCancel: () => void }) {
+  const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<IdeaFormData>({
     resolver: zodResolver(ideaSchema),
     defaultValues: idea ? {
-        ...idea,
-        tags: idea.tags ? JSON.parse(idea.tags).join(', ') : ''
-    } : {},
+      name: idea.name,
+      description: idea.description,
+      status: idea.status,
+      confidence: idea.confidence,
+      tags: parseTags(idea.tags).join(', '),
+    } : { status: 'Idea', confidence: 5 },
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const confidenceValue = watch('confidence');
 
   const onSubmit: SubmitHandler<IdeaFormData> = async (data) => {
     setIsSubmitting(true);
@@ -90,51 +201,70 @@ function IdeaForm({ idea, onSave, onCancel }: { idea?: Idea; onSave: () => void;
       reset();
     } catch (error) {
       console.error('Failed to save idea', error);
-      // Add user-facing error message here
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
-        <h2 className="text-xl font-bold text-[#1A1A2E] mb-4">{idea ? 'Edit Idea' : 'Add New Idea'}</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+        {/* Modal Header */}
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900">{idea ? 'Edit Idea' : 'New Idea'}</h2>
+          <button onClick={onCancel} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-[#374151] mb-1">Name</label>
-            <input id="name" {...register('name')} className="input" />
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
+            <input {...register('name')} className="input" placeholder="e.g. SaaS dashboard for freelancers" />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
           </div>
+
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-[#374151] mb-1">Description</label>
-            <textarea id="description" {...register('description')} className="input h-32" />
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+            <textarea {...register('description')} className="input textarea" rows={3} placeholder="Describe the idea..." />
             {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>}
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-                <label htmlFor="status" className="block text-sm font-medium text-[#374151] mb-1">Status</label>
-                <select id="status" {...register('status')} className="input">
-                    <option>Idea</option>
-                    <option>Researching</option>
-                    <option>Validating</option>
-                    <option>Building</option>
-                </select>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
+              <select {...register('status')} className="input">
+                <option>Idea</option>
+                <option>Researching</option>
+                <option>Validating</option>
+                <option>Building</option>
+              </select>
             </div>
             <div>
-                <label htmlFor="confidence" className="block text-sm font-medium text-[#374151] mb-1">Confidence (1-10)</label>
-                <input id="confidence" type="number" {...register('confidence')} className="input" />
-                {errors.confidence && <p className="text-red-500 text-xs mt-1">{errors.confidence.message}</p>}
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Confidence: <span className="text-blue-600 font-semibold">{confidenceValue}/10</span>
+              </label>
+              <input
+                type="range"
+                {...register('confidence')}
+                min={1}
+                max={10}
+                className="w-full h-2 accent-blue-600"
+              />
+              {errors.confidence && <p className="text-red-500 text-xs mt-1">{errors.confidence.message}</p>}
             </div>
           </div>
+
           <div>
-            <label htmlFor="tags" className="block text-sm font-medium text-[#374151] mb-1">Tags (comma-separated)</label>
-            <input id="tags" {...register('tags')} className="input" />
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Tags (comma-separated)</label>
+            <input {...register('tags')} className="input" placeholder="e.g. saas, fintech, mobile" />
           </div>
-          <div className="flex justify-end gap-2 pt-4">
+
+          <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={onCancel} className="btn btn-secondary">Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Idea'}
+              {isSubmitting ? 'Saving...' : idea ? 'Save Changes' : 'Create Idea'}
             </button>
           </div>
         </form>
@@ -143,58 +273,7 @@ function IdeaForm({ idea, onSave, onCancel }: { idea?: Idea; onSave: () => void;
   );
 }
 
-
-function IdeasDataTable({ ideas, onEdit, onDelete }: { ideas: Idea[]; onEdit: (idea: Idea) => void; onDelete: (id: string) => void; }) {
-    const router = useRouter();
-
-    if (ideas.length === 0) {
-        return <div className="card text-center text-gray-500">No ideas yet. Add one to get started!</div>;
-    }
-    
-  return (
-    <div className="card !p-0">
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
-                        <th scope="col" className="px-6 py-3">Name</th>
-                        <th scope="col" className="px-6 py-3">Status</th>
-                        <th scope="col" className="px-6 py-3">Confidence</th>
-                        <th scope="col" className="px-6 py-3">Tags</th>
-                        <th scope="col" className="px-6 py-3"><span className="sr-only">Actions</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {ideas.map((idea) => (
-                        <tr key={idea.id} className="bg-white border-b hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/ideas/${idea.id}`)}>
-                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                {idea.name}
-                                <p className="text-xs text-gray-400 font-normal truncate max-w-xs">{idea.description}</p>
-                            </th>
-                            <td className="px-6 py-4">{idea.status}</td>
-                            <td className="px-6 py-4">{idea.confidence}/10</td>
-                            <td className="px-6 py-4">
-                                {idea.tags && JSON.parse(idea.tags).map((tag: string) => (
-                                    <span key={tag} className="bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                                <button onClick={(e) => { e.stopPropagation(); onEdit(idea); }} className="p-1 text-gray-500 hover:text-indigo-600"><Edit size={16}/></button>
-                                <button onClick={(e) => { e.stopPropagation(); onDelete(idea.id); }} className="p-1 text-gray-500 hover:text-red-600"><Trash size={16}/></button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    </div>
-  );
-}
-
-
-// --- MAIN PAGE COMPONENT ---
+// --- MAIN PAGE ---
 export default function IdeasPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -208,25 +287,17 @@ export default function IdeasPage() {
       setIdeas(data);
     } catch (error) {
       console.error(error);
-      // Add user-facing error message here
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadIdeas();
-  }, []);
+  useEffect(() => { loadIdeas(); }, []);
 
   const handleSave = () => {
     setIsModalOpen(false);
     setEditingIdea(undefined);
     loadIdeas();
-  };
-
-  const handleAddNew = () => {
-    setEditingIdea(undefined);
-    setIsModalOpen(true);
   };
 
   const handleEdit = (idea: Idea) => {
@@ -244,37 +315,55 @@ export default function IdeasPage() {
       }
     }
   };
-  
-  return (
-    <div>
-      {/* Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-10">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Business Ideas</h1>
-          <button className="btn btn-primary" onClick={handleAddNew}>
-            <Plus size={16} className="mr-1" />
-            Add New Idea
-          </button>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="px-8 py-6">
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Business Ideas"
+        description="Track and develop your ideas"
+        actions={
+          <button className="btn btn-primary" onClick={() => { setEditingIdea(undefined); setIsModalOpen(true); }}>
+            <Plus size={16} className="mr-1" />
+            New Idea
+          </button>
+        }
+      />
+
+      <div className="px-6 py-6">
         {isLoading ? (
-          <div className="card text-center">Loading ideas...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-5 animate-pulse space-y-3">
+                <div className="h-4 bg-gray-100 rounded w-3/4" />
+                <div className="h-3 bg-gray-100 rounded w-full" />
+                <div className="h-3 bg-gray-100 rounded w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : ideas.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <Lightbulb className="w-12 h-12 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-700 mb-1">No ideas yet</h3>
+            <p className="text-sm text-gray-500 mb-6">Capture your first business idea to get started</p>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+              <Plus size={16} className="mr-1" />
+              Add First Idea
+            </button>
+          </div>
         ) : (
-          <IdeasDataTable ideas={ideas} onEdit={handleEdit} onDelete={handleDelete} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {ideas.map(idea => (
+              <IdeaCard key={idea.id} idea={idea} onEdit={handleEdit} onDelete={handleDelete} />
+            ))}
+          </div>
         )}
       </div>
 
       {isModalOpen && (
-        <IdeaForm 
-            idea={editingIdea}
-            onSave={handleSave} 
-            onCancel={() => {
-                setIsModalOpen(false);
-                setEditingIdea(undefined);
-            }}
+        <IdeaModal
+          idea={editingIdea}
+          onSave={handleSave}
+          onCancel={() => { setIsModalOpen(false); setEditingIdea(undefined); }}
         />
       )}
     </div>

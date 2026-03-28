@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { RepoCard } from '@/components/repo-card'
-import { Loading } from '@/components/ui/loading'
+import { SkeletonCard } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FolderGit2, RefreshCw, Search } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 import { toast } from 'sonner'
 
 interface Repo {
@@ -73,36 +74,22 @@ export default function ProjectsPage() {
     )
   })
 
-  if (isLoading) {
-    return <Loading text="Loading GitHub repositories..." />
-  }
-
   return (
-    <div className="min-h-screen bg-bg-base p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-text-primary mb-2">Projects</h1>
-            <p className="text-text-secondary">
-              GitHub repositories with issues, PRs, and activity
-            </p>
-          </div>
-
-          <Button 
-            onClick={handleRefresh} 
-            disabled={isRefreshing}
-            variant="secondary"
-            className="flex items-center gap-2"
-          >
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Projects"
+        description="Your GitHub repositories"
+        actions={
+          <Button onClick={handleRefresh} disabled={isRefreshing} variant="secondary" className="flex items-center gap-2">
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-        </div>
-
+        }
+      />
+      <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Search */}
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
           <Input
             placeholder="Search repositories..."
             value={searchQuery}
@@ -112,7 +99,13 @@ export default function ProjectsPage() {
         </div>
 
         {/* Repositories Grid */}
-        {filteredRepos.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonCard key={i} className="h-40" />
+            ))}
+          </div>
+        ) : filteredRepos.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredRepos.map((repo) => (
               <RepoCard key={repo.url} repo={repo} />
@@ -123,7 +116,7 @@ export default function ProjectsPage() {
             icon={FolderGit2}
             title={searchQuery ? 'No repositories match your search' : 'No repositories found'}
             description={
-              searchQuery 
+              searchQuery
                 ? 'Try a different search term'
                 : 'Make sure you have GitHub CLI (gh) installed and authenticated. Run: gh auth login'
             }

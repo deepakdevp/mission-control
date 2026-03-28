@@ -4,28 +4,19 @@ import { SystemVitals } from '@/components/nerve-center/system-vitals';
 import { SoulMemoryEditor } from '@/components/nerve-center/soul-memory-editor';
 import { HITLQueue } from '@/components/nerve-center/hitl-queue';
 import { ErrorBoundary } from '@/components/nerve-center/error-boundary';
+import { PageHeader } from '@/components/page-header';
 
 export default function NerveCenterPage() {
   return (
-    <div className="min-h-screen">
-      {/* Header - matching JMobbin style */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-40">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Nerve Center</h1>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Nerve Center"
+        description="Real-time monitoring of AI agent activity and system health"
+      />
 
-      {/* Main Content - 32px horizontal, 24px vertical padding per spec */}
-      <div className="px-8 py-6">
-        <div className="mb-5">
-          <p className="text-sm text-[#6B7280]">
-            Real-time monitoring of AI agent activity and system health
-          </p>
-        </div>
-
-        {/* Grid Layout - 20px gap per spec */}
+      {/* Main Content */}
+      <div className="px-6 py-6">
+        {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Left Column */}
           <div className="lg:col-span-1 space-y-5">

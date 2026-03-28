@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react'
 import { AIPromptInput } from '@/components/ai-prompt-input'
 import { TasksTable } from '@/components/tasks-table'
-import { Loading } from '@/components/ui/loading'
+import { SkeletonTable } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { CheckSquare, Sparkles } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 import { toast } from 'sonner'
 
 interface Task {
@@ -120,20 +121,11 @@ export default function TasksPage() {
     await handleTaskUpdate(id, { status })
   }
 
-  if (isLoading) {
-    return <Loading text="Loading tasks..." />
-  }
-
   return (
-    <div className="min-h-screen bg-bg-base p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">Tasks</h1>
-          <p className="text-text-secondary">
-            Manage your tasks with AI-powered natural language input
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader title="Tasks" description="Manage your tasks and to-dos" />
+      <div className="p-6 max-w-7xl mx-auto space-y-6">
+        {/* description removed for cleaner look */}
 
         {/* AI Prompt Input */}
         <div className="sticky top-4 z-10">
@@ -145,7 +137,11 @@ export default function TasksPage() {
         </div>
 
         {/* Tasks Table */}
-        {tasks.length > 0 ? (
+        {isLoading ? (
+          <div className="bg-white border border-[#EEEEEE] rounded-[12px] p-5" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+            <SkeletonTable rows={6} />
+          </div>
+        ) : tasks.length > 0 ? (
           <TasksTable
             tasks={tasks}
             onTaskUpdate={handleTaskUpdate}

@@ -2,89 +2,125 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  Home, 
-  CheckSquare, 
-  Shield, 
-  Calendar, 
-  FolderGit2, 
-  Users, 
-  FileText, 
+import {
+  Home,
+  CheckSquare,
+  Shield,
+  Calendar,
+  FolderGit2,
+  FileText,
   Clock,
   Brain,
   Activity,
   Lightbulb,
-  TrendingUp
+  TrendingUp,
+  Zap
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const navItems = [
-  { href: '/', icon: Home, label: 'Dashboard' },
-  { href: '/nerve-center', icon: Activity, label: 'Nerve Center' },
-  { href: '/ideas', icon: Lightbulb, label: 'Ideas' },
-  { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
-  { href: '/approvals', icon: Shield, label: 'Approvals' },
-  { href: '/portfolio', icon: TrendingUp, label: 'Portfolio' },
-  { href: '/calendar', icon: Calendar, label: 'Calendar' },
-  { href: '/projects', icon: FolderGit2, label: 'Projects' },
-  { href: '/people', icon: Users, label: 'People' },
-  { href: '/memory', icon: Brain, label: 'Memory' },
-  { href: '/docs', icon: FileText, label: 'Docs' },
-  { href: '/cron', icon: Clock, label: 'Cron' },
+const navGroups = [
+  {
+    label: 'WORKSPACE',
+    items: [
+      { href: '/', icon: Home, label: 'Dashboard' },
+      { href: '/nerve-center', icon: Activity, label: 'Nerve Center' },
+    ],
+  },
+  {
+    label: 'MONITORING',
+    items: [
+      { href: '/tasks', icon: CheckSquare, label: 'Tasks' },
+      { href: '/ideas', icon: Lightbulb, label: 'Ideas' },
+      { href: '/approvals', icon: Shield, label: 'Approvals' },
+      { href: '/projects', icon: FolderGit2, label: 'Projects' },
+      { href: '/calendar', icon: Calendar, label: 'Calendar' },
+    ],
+  },
+  {
+    label: 'FINANCE',
+    items: [
+      { href: '/portfolio', icon: TrendingUp, label: 'Portfolio' },
+    ],
+  },
+  {
+    label: 'SYSTEM',
+    items: [
+      { href: '/memory', icon: Brain, label: 'Memory' },
+      { href: '/docs', icon: FileText, label: 'Docs' },
+      { href: '/cron', icon: Clock, label: 'Cron' },
+    ],
+  },
 ]
 
 export function Navigation() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed left-0 top-0 h-screen w-[230px] bg-white border-r border-[#EEEEEE] z-50 flex flex-col">
-      {/* Logo and Title - 16px padding per spec */}
-      <div className="px-4 py-4 border-b border-[#EEEEEE]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#5B4EE8] flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-lg font-bold">⚡</span>
+    <nav className="fixed left-0 top-0 h-screen w-[280px] bg-white border-r border-gray-200 z-[60] flex flex-col">
+      {/* Logo Area */}
+      <div className="h-16 px-5 flex items-center border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+            <Zap className="w-4 h-4 text-white" />
           </div>
-          <h1 className="text-base font-bold text-[#1A1A2E]">Mission Control</h1>
+          <span className="text-base font-semibold text-gray-900">Mission Control</span>
+          <div className="w-2 h-2 rounded-full bg-blue-600 ml-auto flex-shrink-0" />
         </div>
       </div>
 
-      {/* Navigation Items - 16px padding top/bottom per spec */}
-      <div className="py-4 flex-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
-          const Icon = item.icon
+      {/* Navigation Items */}
+      <div className="flex-1 overflow-y-auto py-4 px-3">
+        {navGroups.map((group, groupIdx) => (
+          <div key={groupIdx} className={groupIdx > 0 ? 'mt-4' : ''}>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 px-3 mb-1">
+              {group.label}
+            </p>
+            {group.items.map((item) => {
+              const isActive = pathname === item.href
+              const Icon = item.icon
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 h-10 transition-colors relative',
-                'px-4', /* 0 16px padding per spec */
-                isActive 
-                  ? 'bg-[#F0EFFE] text-[#5B4EE8] font-semibold' 
-                  : 'text-[#374151] font-medium hover:bg-[#F9FAFB]'
-              )}
-            >
-              {/* Active indicator - 3px left border per spec */}
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#5B4EE8]" />
-              )}
-              
-              <Icon className="w-5 h-5 flex-shrink-0" />
-              <span className="text-sm">{item.label}</span>
-            </Link>
-          )
-        })}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2 rounded-md transition-colors mb-0.5',
+                    isActive
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      'flex-shrink-0',
+                      isActive ? 'w-[18px] h-[18px] text-blue-600' : 'w-[18px] h-[18px] text-gray-400'
+                    )}
+                  />
+                  <span className={cn(
+                    'text-sm',
+                    isActive ? 'font-semibold' : 'font-medium'
+                  )}>
+                    {item.label}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        ))}
       </div>
 
-      {/* Footer - 16px padding per spec */}
-      <div className="px-4 py-3 mt-auto border-t border-[#EEEEEE]">
-        <div className="flex items-center justify-between text-xs text-[#6B7280]">
-          <span>v0.1.0</span>
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-[#10B981]" />
-            <span>Online</span>
+      {/* User Profile Footer */}
+      <div className="border-t border-gray-200 px-4 py-3 bg-gray-50 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-xs font-bold">D</span>
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-gray-900 truncate">Deepak Panwar</p>
+            <p className="text-xs text-gray-500 truncate">deepakdevp@gmail.com</p>
+          </div>
+          <div className="ml-auto flex items-center gap-1 flex-shrink-0">
+            <div className="w-2 h-2 rounded-full bg-green-500" />
           </div>
         </div>
       </div>

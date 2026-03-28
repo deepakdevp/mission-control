@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google'
 import { Navigation } from '@/components/navigation'
+import { QuickAdd } from '@/components/quick-add'
 import { Toaster } from 'sonner'
+import 'react-grid-layout/css/styles.css';
 import "./globals.css";
 
 const inter = Inter({ 
@@ -22,11 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className={inter.className} style={{ paddingLeft: '230px' }}>
+      <body className={`${inter.variable} font-sans md:pl-[280px]`}>
         <Navigation />
         <main className="min-h-screen">
           {children}
         </main>
+        <QuickAdd />
         <Toaster 
           position="top-right"
           theme="light"

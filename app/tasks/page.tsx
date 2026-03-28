@@ -6,6 +6,7 @@ import { TasksTable } from '@/components/tasks-table'
 import { SkeletonTable } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { CheckSquare, Sparkles } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 import { toast } from 'sonner'
 
 interface Task {
@@ -121,13 +122,8 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
-      {/* Sticky Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-40">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Tasks</h1>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader title="Tasks" description="Manage your tasks and to-dos" />
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* description removed for cleaner look */}
 

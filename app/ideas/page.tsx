@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Plus, Edit, Trash, MoreHorizontal } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
 
 import { useRouter } from 'next/navigation';
 
@@ -246,17 +247,17 @@ export default function IdeasPage() {
   };
   
   return (
-    <div>
-      {/* Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-10">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Business Ideas</h1>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Business Ideas"
+        description="Track and develop your ideas"
+        actions={
           <button className="btn btn-primary" onClick={handleAddNew}>
             <Plus size={16} className="mr-1" />
-            Add New Idea
+            New Idea
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Main Content */}
       <div className="px-8 py-6">

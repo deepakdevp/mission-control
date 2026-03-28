@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import moment from 'moment'
+import { PageHeader } from '@/components/page-header'
 
 interface CronJob {
   id: string
@@ -200,49 +201,44 @@ export default function CronPage() {
     )
   }
 
+  const handleNewJob = () => {
+    setIsCreating(true)
+    setSelectedJob({
+      id: '',
+      name: '',
+      enabled: true,
+      deleteAfterRun: false,
+      schedule: { kind: 'cron', expr: '0 10 * * *' },
+      sessionTarget: 'main',
+      wakeMode: 'now',
+      payload: { kind: 'systemEvent', text: '' },
+      state: { nextRunAtMs: 0 },
+      createdAtMs: Date.now(),
+      updatedAtMs: Date.now()
+    })
+  }
+
   return (
-    <div className="min-h-screen bg-bg-base">
-      {/* Header */}
-      <div className="border-b border-border-secondary bg-bg-elevated/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="breadcrumb mb-2">
-                <span className="breadcrumb-item">Automation</span>
-                <span className="breadcrumb-separator">/</span>
-                <span className="breadcrumb-item">Cron Jobs</span>
-              </div>
-              <h1 className="text-4xl font-bold text-gradient">Cron Jobs</h1>
-              <p className="text-text-secondary mt-2">
-                Manage scheduled tasks and automation
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={fetchJobs}>
-                <RefreshCw className="w-4 h-4" />
-                Refresh
-              </Button>
-              <Button variant="primary" size="sm" onClick={() => {
-                setIsCreating(true)
-                setSelectedJob({
-                  id: '',
-                  name: '',
-                  enabled: true,
-                  deleteAfterRun: false,
-                  schedule: { kind: 'cron', expr: '0 10 * * *' },
-                  sessionTarget: 'main',
-                  wakeMode: 'now',
-                  payload: { kind: 'systemEvent', text: '' },
-                  state: { nextRunAtMs: 0 },
-                  createdAtMs: Date.now(),
-                  updatedAtMs: Date.now()
-                })
-              }}>
-                <Plus className="w-4 h-4" />
-                New job
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Cron Jobs"
+        description="Manage scheduled tasks and automation"
+        actions={
+          <>
+            <Button variant="ghost" size="sm" onClick={fetchJobs}>
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleNewJob}>
+              <Plus className="w-4 h-4" />
+              New job
+            </Button>
+          </>
+        }
+      />
+      <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="hidden">
+          {/* structure placeholder */}
           </div>
 
           {/* Search & Stats */}

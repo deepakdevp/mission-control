@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { FileText, ChevronDown, ChevronRight, Clock, BookOpen } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 import { Skeleton, SkeletonText } from '@/components/ui/skeleton'
 
 interface DocFile {
@@ -105,17 +106,8 @@ export default function DocsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
-      {/* Sticky Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-40">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Docs</h1>
-          <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-            <BookOpen className="w-4 h-4" />
-            <span>Read-only</span>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader title="Docs" description="Documentation and reference files from your workspace" />
 
       <div className="p-6 max-w-4xl mx-auto">
         <p className="text-sm text-[var(--text-secondary)] mb-6">

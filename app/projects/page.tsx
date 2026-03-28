@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FolderGit2, RefreshCw, Search } from 'lucide-react'
+import { PageHeader } from '@/components/page-header'
 import { toast } from 'sonner'
 
 interface Repo {
@@ -74,22 +75,17 @@ export default function ProjectsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)]">
-      {/* Sticky Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-40">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Projects</h1>
-          <Button
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            variant="secondary"
-            className="flex items-center gap-2"
-          >
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Projects"
+        description="Your GitHub repositories"
+        actions={
+          <Button onClick={handleRefresh} disabled={isRefreshing} variant="secondary" className="flex items-center gap-2">
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-        </div>
-      </div>
+        }
+      />
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Search */}
         <div className="relative max-w-md">

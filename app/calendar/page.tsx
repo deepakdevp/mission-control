@@ -32,6 +32,7 @@ import { toast } from 'sonner'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import './calendar.css'
 import { formatRelativeTime } from '@/lib/utils'
+import { PageHeader } from '@/components/page-header'
 
 const localizer = momentLocalizer(moment)
 
@@ -256,40 +257,34 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-base">
-      {/* Header */}
-      <div className="border-b border-border-secondary bg-bg-elevated/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-[1800px] mx-auto px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="breadcrumb mb-2">
-                <span className="breadcrumb-item">Calendar</span>
-              </div>
-              <h1 className="text-4xl font-bold text-gradient">Calendar</h1>
-              <p className="text-text-secondary mt-2">
-                Manage your schedule with Google Calendar sync
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={handleSync} disabled={isSyncing}>
-                <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-                {isSyncing ? 'Syncing...' : 'Sync'}
-              </Button>
-              <Button variant="secondary" size="sm" onClick={() => setShowFilters(!showFilters)}>
-                <Filter className="w-4 h-4" />
-                Filters
-                <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-              </Button>
-              <Button variant="primary" size="sm" onClick={() => {
-                const now = new Date()
-                const end = new Date(now.getTime() + 60 * 60 * 1000)
-                handleSelectSlot({ start: now, end, slots: [], action: 'select' })
-              }}>
-                <Plus className="w-4 h-4" />
-                New event
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader
+        title="Calendar"
+        description="Manage your schedule with Google Calendar sync"
+        actions={
+          <>
+            <Button variant="ghost" size="sm" onClick={handleSync} disabled={isSyncing}>
+              <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+              {isSyncing ? 'Syncing...' : 'Sync'}
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setShowFilters(!showFilters)}>
+              <Filter className="w-4 h-4" />
+              Filters
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => {
+              const now = new Date()
+              const end = new Date(now.getTime() + 60 * 60 * 1000)
+              handleSelectSlot({ start: now, end, slots: [], action: 'select' })
+            }}>
+              <Plus className="w-4 h-4" />
+              New event
+            </Button>
+          </>
+        }
+      />
+      <div className="max-w-[1800px] mx-auto">
+          <div className="hidden">
+          {/* placeholder for structure compatibility */}
           </div>
 
           {/* Search Bar */}

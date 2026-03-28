@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import Image from 'next/image';
+import { PageHeader } from '@/components/page-header';
 
 // --- TYPES ---
 interface BinanceHolding {
@@ -123,12 +124,8 @@ export default function PortfolioPage() {
 
     if (isLoading) {
         return (
-          <div>
-            <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-10">
-              <div className="h-14 px-6 flex items-center">
-                <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Investment Portfolio</h1>
-              </div>
-            </div>
+          <div className="min-h-screen bg-gray-50">
+            <PageHeader title="Investment Portfolio" />
             <div className="px-8 py-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -154,13 +151,8 @@ export default function PortfolioPage() {
     const totalUsdGainPercent = (data.usStocks.totalGainUsd / (data.usStocks.totalValueUsd - data.usStocks.totalGainUsd)) * 100;
 
   return (
-    <div>
-      {/* Header */}
-      <div className="bg-white border-b border-[#EEEEEE] sticky top-0 z-10">
-        <div className="h-14 px-6 flex items-center justify-between">
-          <h1 className="text-[28px] font-bold text-[#1A1A2E] leading-none">Investment Portfolio</h1>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader title="Investment Portfolio" description="Track your investments across all platforms" />
 
       {/* Main Content */}
       <div className="px-8 py-6 space-y-6">

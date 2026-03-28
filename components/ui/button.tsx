@@ -8,31 +8,26 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] whitespace-nowrap user-select-none'
-    
+    const baseStyles = 'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] whitespace-nowrap select-none'
+
     const variants = {
-      primary: 'bg-primary text-white hover:bg-primary/90 hover:shadow-[0_0_0_4px_rgba(99,102,241,0.2)]',
-      secondary: 'bg-bg-elevated text-text-primary hover:bg-bg-hover border border-border-primary hover:border-primary',
-      success: 'bg-success text-white hover:bg-success/90 hover:shadow-[0_0_0_4px_rgba(34,197,94,0.2)]',
-      danger: 'bg-danger text-white hover:bg-danger/90 hover:shadow-[0_0_0_4px_rgba(239,68,68,0.2)]',
-      ghost: 'bg-transparent text-text-secondary hover:bg-bg-hover hover:text-text-primary'
+      primary:   'bg-blue-600 text-white hover:bg-blue-700 shadow-sm',
+      secondary: 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300',
+      success:   'bg-green-600 text-white hover:bg-green-700 shadow-sm',
+      danger:    'bg-red-600 text-white hover:bg-red-700 shadow-sm',
+      ghost:     'bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-700',
     }
-    
+
     const sizes = {
-      sm: 'text-[13px] px-4 h-8',
-      md: 'text-sm px-6 h-10',
-      lg: 'text-[15px] px-8 h-12'
+      sm: 'text-xs px-3 h-8',
+      md: 'text-sm px-4 h-9',
+      lg: 'text-sm px-5 h-11',
     }
-    
+
     return (
       <button
         ref={ref}
-        className={cn(
-          baseStyles,
-          variants[variant],
-          sizes[size],
-          className
-        )}
+        className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={disabled}
         {...props}
       >

@@ -10,14 +10,14 @@ interface LoadingProps {
 export function Loading({ className, text, fullScreen = false }: LoadingProps) {
   const content = (
     <div className="flex flex-col items-center justify-center gap-3">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      {text && <p className="text-sm text-text-secondary">{text}</p>}
+      <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      {text && <p className="text-sm text-gray-500">{text}</p>}
     </div>
   )
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-bg-base z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-50 z-50">
         {content}
       </div>
     )
@@ -43,6 +43,6 @@ export function LoadingSpinner({ className, size = 'md' }: LoadingSpinnerProps) 
   }
 
   return (
-    <Loader2 className={cn('animate-spin text-primary', sizes[size], className)} />
+    <Loader2 className={cn('animate-spin text-blue-600', sizes[size], className)} />
   )
 }

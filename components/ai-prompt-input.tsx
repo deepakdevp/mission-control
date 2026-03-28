@@ -55,9 +55,9 @@ export function AIPromptInput({
   return (
     <div className={cn('w-full', className)}>
       <form onSubmit={handleSubmit} className="relative">
-        <div className="glass-card p-1">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-1">
           <div className="flex items-center gap-2">
-            <div className="flex-shrink-0 pl-3 text-text-secondary">
+            <div className="flex-shrink-0 pl-3 text-gray-400">
               {icon || <Sparkles className="w-5 h-5" />}
             </div>
             
@@ -70,7 +70,7 @@ export function AIPromptInput({
               disabled={isLoading || disabled}
               className={cn(
                 'flex-1 bg-transparent border-none outline-none',
-                'text-text-primary placeholder:text-text-tertiary',
+                'text-gray-900 placeholder:text-gray-400',
                 'py-3 px-2 text-sm',
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}

@@ -72,7 +72,10 @@ export function Navigation() {
       <div className="flex-1 overflow-y-auto py-4 px-3">
         {navGroups.map((group, groupIdx) => (
           <div key={groupIdx} className={groupIdx > 0 ? 'mt-4' : ''}>
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 px-3 mb-1">
+            <p className={cn(
+              'text-[11px] font-semibold tracking-widest text-gray-400 uppercase px-3 mb-1',
+              groupIdx > 0 ? 'mt-4' : ''
+            )}>
               {group.label}
             </p>
             {group.items.map((item) => {
@@ -84,24 +87,19 @@ export function Navigation() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-md transition-colors mb-0.5',
+                    'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors mb-0.5 text-sm font-medium',
                     isActive
                       ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   )}
                 >
                   <Icon
                     className={cn(
-                      'flex-shrink-0',
-                      isActive ? 'w-[18px] h-[18px] text-blue-600' : 'w-[18px] h-[18px] text-gray-400'
+                      'w-[18px] h-[18px] flex-shrink-0',
+                      isActive ? 'text-blue-600' : 'text-gray-400'
                     )}
                   />
-                  <span className={cn(
-                    'text-sm',
-                    isActive ? 'font-semibold' : 'font-medium'
-                  )}>
-                    {item.label}
-                  </span>
+                  <span>{item.label}</span>
                 </Link>
               )
             })}

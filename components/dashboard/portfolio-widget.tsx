@@ -30,10 +30,17 @@ export function PortfolioWidget() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/portfolio-summary')
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 8000)
+    
+    fetch('/api/portfolio-summary', { signal: controller.signal })
       .then(r => r.json())
-      .then(d => { setData(d); setLoading(false) })
-      .catch(() => setLoading(false))
+      .then(d => { clearTimeout(timeout); setData(d); setLoading(false) })
+      .catch(() => { clearTimeout(timeout); setLoading(false) })
+    
+    // Fallback: stop loading after 5 seconds
+    const fallback = setTimeout(() => setLoading(false), 5000)
+    return () => { controller.abort(); clearTimeout(timeout); clearTimeout(fallback) }
   }, [])
 
   if (loading) {

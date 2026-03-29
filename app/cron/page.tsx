@@ -315,10 +315,9 @@ export default function CronPage() {
               </div>
             </div>
           )}
-        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-8 py-8">
+      <div className="px-8 py-4">
         {filteredJobs.length > 0 ? (
           <div className="space-y-4">
             {filteredJobs.map((job, idx) => (

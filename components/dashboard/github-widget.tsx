@@ -35,16 +35,20 @@ export function GithubWidget() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/github/repos?detailed=true')
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10000)
+
+    fetch('/api/github/repos?detailed=true', { signal: controller.signal })
       .then(r => r.json())
       .then((repos: Repo[]) => {
+        clearTimeout(timeout)
         if (!Array.isArray(repos)) {
           setLoading(false)
           return
         }
         const allCommits: Commit[] = []
         repos.forEach((repo) => {
-          (repo.commits || []).forEach((c) => {
+          ;(repo.commits || []).forEach((c) => {
             allCommits.push({
               sha: c.sha,
               message: c.commit.message.split('\n')[0],
@@ -57,7 +61,19 @@ export function GithubWidget() {
         setCommits(allCommits.slice(0, 5))
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        clearTimeout(timeout)
+        setLoading(false)
+      })
+
+    // Fallback: always stop loading after 3 seconds
+    const fallback = setTimeout(() => setLoading(false), 3000)
+
+    return () => {
+      controller.abort()
+      clearTimeout(timeout)
+      clearTimeout(fallback)
+    }
   }, [])
 
   if (loading) {
@@ -100,9 +116,10 @@ export function GithubWidget() {
             </div>
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <FolderGit2 className="w-6 h-6 text-[var(--text-muted)] mb-2" />
-            <p className="text-sm text-[var(--text-muted)]">No recent commits</p>
+          <div className="flex flex-col items-center justify-center h-full text-center py-6">
+            <FolderGit2 className="w-8 h-8 text-gray-300 mb-2" />
+            <p className="text-sm text-gray-500">No recent commits</p>
+            <p className="text-xs text-gray-400 mt-1">Connect GitHub to see activity</p>
           </div>
         )}
       </div>

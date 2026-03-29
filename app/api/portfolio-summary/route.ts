@@ -18,7 +18,8 @@ export async function GET() {
 
     const summary = readJson('summary.json')
     const binance = readJson('binance-portfolio.json')
-    const usStocks = readJson('us_stocks.json')
+    // Try both filenames
+    const usStocks = readJson('us-stocks.json') || readJson('us_stocks.json')
     const mutualFunds = readJson('mutual_funds.json')
     const indianStocks = readJson('indian_stocks.json')
 
@@ -26,8 +27,9 @@ export async function GET() {
     const usdInrRate = summary?.usd_inr_rate || 83.5
 
     const cryptoUsd = binance?.total_usdt || 0
-    const usStocksValue = usStocks?.[0]?.current_value || 0
-    const usStocksInvested = usStocks?.[0]?.invested_value || 0
+    // us-stocks.json is a single object, not an array
+    const usStocksValue = Array.isArray(usStocks) ? usStocks[0]?.current_value || 0 : usStocks?.current_value || 0
+    const usStocksInvested = Array.isArray(usStocks) ? usStocks[0]?.total_invested || 0 : usStocks?.total_invested || 0
     const mfTotal = mutualFunds
       ? mutualFunds.reduce((sum: number, f: { current_value: number }) => sum + f.current_value, 0)
       : 0
@@ -54,7 +56,9 @@ export async function GET() {
       usStocks: {
         totalUsd: usStocksValue,
         investedUsd: usStocksInvested,
-        gainUsd: usStocksValue - usStocksInvested,
+        gainUsd: Array.isArray(usStocks) 
+          ? usStocksValue - usStocksInvested 
+          : usStocks?.total_returns || (usStocksValue - usStocksInvested),
       },
       mutualFunds: {
         totalInr: mfTotal,

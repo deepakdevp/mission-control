@@ -300,7 +300,7 @@ export default function DashboardPage() {
                       boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                       fontSize: 12,
                     }}
-                    formatter={(v: number) => [formatInr(v), 'Portfolio']}
+                    formatter={(v) => [formatInr(Number(v)), 'Portfolio']}
                   />
                   <Area
                     type="monotone"

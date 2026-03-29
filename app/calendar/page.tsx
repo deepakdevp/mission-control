@@ -282,7 +282,7 @@ export default function CalendarPage() {
           </>
         }
       />
-      <div className="max-w-[1800px] mx-auto">
+      <div className="px-8">
           <div className="hidden">
           {/* placeholder for structure compatibility */}
           </div>
@@ -309,10 +309,9 @@ export default function CalendarPage() {
               </div>
             </div>
           </div>
-        </div>
       </div>
 
-      <div className="max-w-[1800px] mx-auto px-8 py-8">
+      <div className="px-8 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="space-y-6">
